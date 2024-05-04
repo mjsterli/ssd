@@ -12,3 +12,61 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model RequestService {
+  RequestServiceID Int     @id @default(autoincrement())
+  Description      String  @db.VarChar()
+  Order            Order[]
+}
+
+model PropertyOccupancy {
+  PropertyOccupancyID Int     @id @default(autoincrement())
+  Description         String  @db.VarChar()
+  Order               Order[]
+}
+
+model Customer {
+  CustomerID   Int     @id @default(autoincrement())
+  FirstName    String  @db.VarChar()
+  LastName     String  @db.VarChar()
+  PhoneNumber  String  @db.VarChar()
+  EmailAddress String  @db.VarChar()
+  Order        Order[]
+}
+
+model Order {
+  OrderID              Int               @id @default(autoincrement())
+  CreatedAt            DateTime          @default(now())
+  PropertyAddress      String            @db.VarChar()
+  ProeprtyCounty       String            @db.VarChar()
+  RequestedService     RequestService    @relation(fields: [RequestedServiceID], references: [RequestServiceID])
+  RequestedServiceID   Int
+  RequestedServiceDate DateTime
+  Occupancy            PropertyOccupancy @relation(fields: [OccupancyID], references: [PropertyOccupancyID])
+  OccupancyID          Int
+  belongsTo            Customer          @relation(fields: [CustomerID], references: [CustomerID])
+  CustomerID           Int
+  Fullfillment         Fullfillment[]
+  Attachment           Attachment[]
+}
+
+model Employee {
+  EmployeeID   Int            @id @default(autoincrement())
+  FirstName    String         @db.VarChar()
+  LastName     String         @db.VarChar()
+  Fullfillment Fullfillment[]
+}
+
+model Fullfillment {
+  FullfilledOrder       Order    @relation(fields: [OrderID], references: [OrderID])
+  OrderID               Int      @id
+  FullfilledAt          DateTime
+  EmployeeWhoFullfilled Employee @relation(fields: [FullfilledEmployeeID], references: [EmployeeID])
+  FullfilledEmployeeID  Int
+}
+
+model Attachment {
+  Order          Order @relation(fields: [OrderID], references: [OrderID])
+  OrderID        Int   @id
+  AttachmentData Bytes @db.ByteA
+}
