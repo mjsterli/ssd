@@ -14,44 +14,44 @@ datasource db {
 }
 
 model RequestService {
-  RequestServiceID Int     @id @default(autoincrement())
+  RequestServiceID String     @id @default(uuid())
   Description      String  @db.VarChar()
   Order            Order[]
 }
 
 model PropertyOccupancy {
-  PropertyOccupancyID Int     @id @default(autoincrement())
+  PropertyOccupancyID String     @id @default(uuid())
   Description         String  @db.VarChar()
   Order               Order[]
 }
 
 model Customer {
-  CustomerID   Int     @id @default(autoincrement())
-  FirstName    String  @db.VarChar()
-  LastName     String  @db.VarChar()
-  PhoneNumber  String  @db.VarChar()
-  EmailAddress String  @db.VarChar()
+  CustomerID   String     @id @default(uuid())
+  FirstName    String  
+  LastName     String  
+  PhoneNumber  String   @unique
+  EmailAddress String   @unique
   Order        Order[]
 }
 
 model Order {
-  OrderID              Int               @id @default(autoincrement())
+  OrderID              String               @id @default(uuid())
   CreatedAt            DateTime          @default(now())
   PropertyAddress      String            @db.VarChar()
   ProeprtyCounty       String            @db.VarChar()
   RequestedService     RequestService    @relation(fields: [RequestedServiceID], references: [RequestServiceID])
-  RequestedServiceID   Int
+  RequestedServiceID   String
   RequestedServiceDate DateTime
   Occupancy            PropertyOccupancy @relation(fields: [OccupancyID], references: [PropertyOccupancyID])
-  OccupancyID          Int
+  OccupancyID          String
   belongsTo            Customer          @relation(fields: [CustomerID], references: [CustomerID])
-  CustomerID           Int
+  CustomerID           String
   Fullfillment         Fullfillment[]
   Attachment           Attachment[]
 }
 
 model Employee {
-  EmployeeID   Int            @id @default(autoincrement())
+  EmployeeID   String            @id @default(uuid())
   FirstName    String         @db.VarChar()
   LastName     String         @db.VarChar()
   Fullfillment Fullfillment[]
@@ -59,14 +59,14 @@ model Employee {
 
 model Fullfillment {
   FullfilledOrder       Order    @relation(fields: [OrderID], references: [OrderID])
-  OrderID               Int      @id
+  OrderID               String      @id
   FullfilledAt          DateTime
   EmployeeWhoFullfilled Employee @relation(fields: [FullfilledEmployeeID], references: [EmployeeID])
-  FullfilledEmployeeID  Int
+  FullfilledEmployeeID  String
 }
 
 model Attachment {
   Order          Order @relation(fields: [OrderID], references: [OrderID])
-  OrderID        Int   @id
+  OrderID        String   @id
   AttachmentData Bytes @db.ByteA
 }
