@@ -9,24 +9,24 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model RequestService {
-  RequestServiceID String     @id @default(uuid())
-  Description      String  @db.VarChar()
+  RequestServiceID String  @id @default(uuid())
+  Description      String
   Order            Order[]
 }
 
 model PropertyOccupancy {
-  PropertyOccupancyID String     @id @default(uuid())
-  Description         String  @db.VarChar()
+  PropertyOccupancyID String  @id @default(uuid())
+  Description         String
   Order               Order[]
 }
 
 model Customer {
-  CustomerID   String     @id @default(uuid())
+  CustomerID   String   @id @default(uuid())
   FirstName    String  
   LastName     String  
   PhoneNumber  String   @unique
@@ -35,10 +35,10 @@ model Customer {
 }
 
 model Order {
-  OrderID              String               @id @default(uuid())
+  OrderID              String            @id @default(uuid())
   CreatedAt            DateTime          @default(now())
-  PropertyAddress      String            @db.VarChar()
-  ProeprtyCounty       String            @db.VarChar()
+  PropertyAddress      String            
+  ProeprtyCounty       String            
   RequestedService     RequestService    @relation(fields: [RequestedServiceID], references: [RequestServiceID])
   RequestedServiceID   String
   RequestedServiceDate DateTime
@@ -46,20 +46,20 @@ model Order {
   OccupancyID          String
   belongsTo            Customer          @relation(fields: [CustomerID], references: [CustomerID])
   CustomerID           String
-  Fullfillment         Fullfillment[]
+  Fullfillment          Fullfillment[]
   Attachment           Attachment[]
 }
 
 model Employee {
-  EmployeeID   String            @id @default(uuid())
-  FirstName    String         @db.VarChar()
-  LastName     String         @db.VarChar()
+  EmployeeID   String         @id @default(uuid())
+  FirstName    String         
+  LastName     String         
   Fullfillment Fullfillment[]
 }
 
 model Fullfillment {
   FullfilledOrder       Order    @relation(fields: [OrderID], references: [OrderID])
-  OrderID               String      @id
+  OrderID              String   @id
   FullfilledAt          DateTime
   EmployeeWhoFullfilled Employee @relation(fields: [FullfilledEmployeeID], references: [EmployeeID])
   FullfilledEmployeeID  String
@@ -68,5 +68,5 @@ model Fullfillment {
 model Attachment {
   Order          Order @relation(fields: [OrderID], references: [OrderID])
   OrderID        String   @id
-  AttachmentData Bytes @db.ByteA
+  AttachmentData Bytes 
 }
