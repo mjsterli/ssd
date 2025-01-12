@@ -38,7 +38,7 @@ model Order {
   OrderID              String            @id @default(uuid())
   CreatedAt            DateTime          @default(now())
   PropertyAddress      String            
-  ProeprtyCounty       String            
+  PropertyCounty       String            
   RequestedService     RequestService    @relation(fields: [RequestedServiceID], references: [RequestServiceID])
   RequestedServiceID   String
   RequestedServiceDate DateTime
@@ -46,7 +46,7 @@ model Order {
   OccupancyID          String
   belongsTo            Customer          @relation(fields: [CustomerID], references: [CustomerID])
   CustomerID           String
-  Fullfillment          Fullfillment[]
+  Fullfillment         Fullfillment[]
   Attachment           Attachment[]
 }
 
