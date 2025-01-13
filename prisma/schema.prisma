@@ -19,54 +19,53 @@ model RequestService {
   Order            Order[]
 }
 
-model PropertyOccupancy {
-  PropertyOccupancyID String  @id @default(uuid())
-  Description         String
-  Order               Order[]
+enum PropertyOccupancy {
+  Vacant        @map("VACANT")
+  OwnerOccupied @map("OWNER")
+  TENANT
 }
 
 model Customer {
-  CustomerID   String   @id @default(uuid())
-  FirstName    String  
-  LastName     String  
-  PhoneNumber  String   @unique
-  EmailAddress String   @unique
+  CustomerID   String  @id @default(uuid())
+  FirstName    String
+  LastName     String
+  PhoneNumber  String  @unique
+  EmailAddress String  @unique
   Order        Order[]
 }
 
 model Order {
   OrderID              String            @id @default(uuid())
   CreatedAt            DateTime          @default(now())
-  PropertyAddress      String            
-  PropertyCounty       String            
+  PropertyAddress      String
+  PropertyCounty       String
   RequestedService     RequestService    @relation(fields: [RequestedServiceID], references: [RequestServiceID])
   RequestedServiceID   String
   RequestedServiceDate DateTime
-  Occupancy            PropertyOccupancy @relation(fields: [OccupancyID], references: [PropertyOccupancyID])
-  OccupancyID          String
+  Occupancy            PropertyOccupancy
   belongsTo            Customer          @relation(fields: [CustomerID], references: [CustomerID])
   CustomerID           String
-  Fullfillment         Fullfillment[]
+  Fullfillment         Fullfillment?
   Attachment           Attachment[]
 }
 
 model Employee {
   EmployeeID   String         @id @default(uuid())
-  FirstName    String         
-  LastName     String         
+  FirstName    String
+  LastName     String
   Fullfillment Fullfillment[]
 }
 
 model Fullfillment {
-  FullfilledOrder       Order    @relation(fields: [OrderID], references: [OrderID])
-  OrderID              String   @id
+  Order                 Order    @relation(fields: [FullfilledOrderID], references: [OrderID])
+  FullfilledOrderID     String   @unique
   FullfilledAt          DateTime
   EmployeeWhoFullfilled Employee @relation(fields: [FullfilledEmployeeID], references: [EmployeeID])
   FullfilledEmployeeID  String
 }
 
 model Attachment {
-  Order          Order @relation(fields: [OrderID], references: [OrderID])
-  OrderID        String   @id
-  AttachmentData Bytes 
+  Order          Order  @relation(fields: [OrderID], references: [OrderID])
+  OrderID        String @id
+  AttachmentData Bytes
 }

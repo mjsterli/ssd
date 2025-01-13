@@ -5,7 +5,7 @@ import { getOrders, getOrder } from './handlers/order';
 
 const router = Router();
 
-router.get('/employee', getEmployees);
+router.get('/employees', getEmployees);
 router.get('/customer/:phonenumber', getCustomerByPhoneNumber);
 router.get('/orders', getOrders);
 router.get('/order/:orderid', getOrder);

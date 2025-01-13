@@ -146,36 +146,6 @@ async function main() {
   });
   /***  Request Services ***/
 
-  /***  Property Occupancy ***/
-  const propertyOccupancyVacant = await prisma.propertyOccupancy.upsert({
-    where: {
-      PropertyOccupancyID: ""
-    },
-    update: {},
-    create: {
-      Description: "Vacant"
-    }
-  });
-  const propertyOccupancyOwnerOccupied = await prisma.propertyOccupancy.upsert({
-    where: {
-      PropertyOccupancyID: ""
-    },
-    update: {},
-    create: {
-      Description: "Owner Occupied"
-    }
-  });
-  const propertyOccupancyTenantOccupied = await prisma.propertyOccupancy.upsert({
-    where: {
-      PropertyOccupancyID: ""
-    },
-    update: {},
-    create: {
-      Description: "Tenant Occupied"
-    }
-  });
-  /***  Property Occupancy ***/
-
   /***  Employee  ***/
   const angieSunshie = await prisma.employee.upsert({
     where: {
@@ -218,9 +188,9 @@ async function main() {
     create: {
       PropertyAddress: "4739 Bradford St. Plano, TX. 75024",
       PropertyCounty: "Collin",
-      RequestedServiceID: comboBoxInstall.RequestServiceID,
+      RequestedServiceID: supraIBoxRemoval.RequestServiceID,
       RequestedServiceDate: new Date(2023, 10, 23, 15, 34, 0),
-      OccupancyID: propertyOccupancyVacant.PropertyOccupancyID,
+      Occupancy: "OwnerOccupied",
       CustomerID: zachery.CustomerID
     }
   });
@@ -234,7 +204,7 @@ async function main() {
       PropertyCounty: "Denton",
       RequestedServiceID: supraIBoxInstall.RequestServiceID,
       RequestedServiceDate: new Date(2024, 2, 28, 8, 57, 0),
-      OccupancyID: propertyOccupancyTenantOccupied.PropertyOccupancyID,
+      Occupancy: "TENANT",
       CustomerID: camilla.CustomerID
     }
   });
@@ -248,7 +218,7 @@ async function main() {
       PropertyCounty: "Collin",
       RequestedServiceID: openHouseSignPlacement.RequestServiceID,
       RequestedServiceDate: new Date(2024, 8, 12, 12, 33, 0),
-      OccupancyID: propertyOccupancyOwnerOccupied.PropertyOccupancyID,
+      Occupancy: "OwnerOccupied",
       CustomerID: lindsay.CustomerID
     }
   });
@@ -262,7 +232,7 @@ async function main() {
       PropertyCounty: "Collin",
       RequestedServiceID: realEstateSignInstall.RequestServiceID,
       RequestedServiceDate: new Date(2025, 1, 5, 22, 22, 0),
-      OccupancyID: propertyOccupancyVacant.PropertyOccupancyID,
+      Occupancy: "Vacant",
       CustomerID: sullivan.CustomerID
     }
   });
@@ -276,7 +246,7 @@ async function main() {
       PropertyCounty: "Dallas",
       RequestedServiceID: realEstateSignInstall.RequestServiceID,
       RequestedServiceDate: new Date(2025, 1, 15, 1, 2, 0),
-      OccupancyID: propertyOccupancyOwnerOccupied.PropertyOccupancyID,
+      Occupancy: "OwnerOccupied",
       CustomerID: sullivan.CustomerID
     }
   });
@@ -290,7 +260,7 @@ async function main() {
       PropertyCounty: "Dallas",
       RequestedServiceID: supraIBoxRemoval.RequestServiceID,
       RequestedServiceDate: new Date(2025, 1, 5, 22, 22, 0),
-      OccupancyID: propertyOccupancyVacant.PropertyOccupancyID,
+      Occupancy: "Vacant",
       CustomerID: lindsay.CustomerID
     }
   });
@@ -304,7 +274,7 @@ async function main() {
       PropertyCounty: "Collin",
       RequestedServiceID: comboBoxRemoval.RequestServiceID,
       RequestedServiceDate: new Date(2022, 11, 4, 3, 4, 0),
-      OccupancyID: propertyOccupancyVacant.PropertyOccupancyID,
+      Occupancy: "Vacant",
       CustomerID: zachery.CustomerID
     }
   });
@@ -318,7 +288,7 @@ async function main() {
       PropertyCounty: "Dallas",
       RequestedServiceID: openHouseSignPlacement.RequestServiceID,
       RequestedServiceDate: new Date(2021, 4, 25),
-      OccupancyID: propertyOccupancyOwnerOccupied.PropertyOccupancyID,
+      Occupancy: "OwnerOccupied",
       CustomerID: sullivan.CustomerID
     }
   });
@@ -332,7 +302,7 @@ async function main() {
       PropertyCounty: "Rowlett",
       RequestedServiceID: realEstateSignInstall.RequestServiceID,
       RequestedServiceDate: new Date(2023, 7, 28),
-      OccupancyID: propertyOccupancyVacant.PropertyOccupancyID,
+      Occupancy: "Vacant",
       CustomerID: latrelle.CustomerID
     }
   });
@@ -346,7 +316,7 @@ async function main() {
       PropertyCounty: "Tarrant",
       RequestedServiceID: comboBoxRemoval.RequestServiceID,
       RequestedServiceDate: new Date(2020, 10, 15),
-      OccupancyID: propertyOccupancyVacant.PropertyOccupancyID,
+      Occupancy: "Vacant",
       CustomerID: shawnee.CustomerID
     }
   });
@@ -360,7 +330,7 @@ async function main() {
       PropertyCounty: "Denton",
       RequestedServiceID: openHouseSignPlacement.RequestServiceID,
       RequestedServiceDate: new Date(2025, 3, 25),
-      OccupancyID: propertyOccupancyTenantOccupied.PropertyOccupancyID,
+      Occupancy: "TENANT",
       CustomerID: latrelle.CustomerID
     }
   });
@@ -369,22 +339,22 @@ async function main() {
   /***  Fullfillments  ***/
   const order2Fullfilled = await prisma.fullfillment.upsert({
     where: {
-      OrderID: ""
+      FullfilledOrderID: ""
     },
     update: {},
     create: {
-      OrderID: order2.OrderID,
+      FullfilledOrderID: order2.OrderID,
       FullfilledAt: new Date(2024, 2, 28, 0, 0, 0),
       FullfilledEmployeeID: sommerDarell.EmployeeID
     }
   });
   const order3Fullfilled = await prisma.fullfillment.upsert({
     where: {
-      OrderID: ""
+      FullfilledOrderID: ""
     },
     update: {},
     create: {
-      OrderID: order3.OrderID,
+      FullfilledOrderID: order3.OrderID,
       FullfilledAt: new Date(2024, 8, 13),
       FullfilledEmployeeID: osbornDenver.EmployeeID
     }
