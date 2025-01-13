@@ -9,5 +9,6 @@ router.get('/employees', getEmployees);
 router.get('/customer/:phonenumber', getCustomerByPhoneNumber);
 router.get('/orders', getOrders);
 router.get('/order/:orderid', getOrder);
+router.get('/order', getOrder);
 
 export default router;

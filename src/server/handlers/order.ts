@@ -7,7 +7,7 @@ export const getOrders = async (req, res) => {
 };
 
 export const getOrder = async (req, res) => {
-  const orderid = req.params.orderid;
+  const orderid = req.params.orderid ?? req.query.orderid;
 
   const order = await prisma.order.findUnique({
     where: {

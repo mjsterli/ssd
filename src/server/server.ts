@@ -12,11 +12,11 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
-app.get('/', (req, res, next) => {
-  setTimeout(() => {
-    next(new Error('hello'))
-  },1)
-})
+// app.get('/', (req, res, next) => {
+//   setTimeout(() => {
+//     next(new Error('hello'))
+//   },1)
+// });
 
 app.use('/api', router);
 
