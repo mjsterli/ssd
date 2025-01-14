@@ -1,5 +1,6 @@
 import express from 'express';
-import router from './router';
+import apiRouter from './api/apiRouter';
+import twilioRouter from './twilio/twilioRouter';
 //import morgan from 'morgan'
 //import cors from 'cors'
 //import { protect } from './modules/auth'
@@ -18,8 +19,8 @@ app.use(express.urlencoded({extended: true}))
 //   },1)
 // });
 
-app.use('/api', router);
-
+app.use('/api', apiRouter);
+app.use('/twilio', twilioRouter)
 // app.post('/user', createNewUser)
 // app.post('/signin', signin)
 
