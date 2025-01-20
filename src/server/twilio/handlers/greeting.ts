@@ -9,12 +9,12 @@ export const smsTwilioReply = async (req, res) => {
   let message;
   if(installedOrders){
     message = `
-    Hi ${customer.FirstName},
-    You currently have ${installedOrders.length} installed orders.
-    Would you like to remove a sign from one of your installed orders?
-    Please select a number to remove that order:
-    `;
-    message += installedOrders.reduce((propertyList, order, orderNum) => propertyList + `${orderNum + 1} ${order.PropertyAddress}\n`, "" ); 
+Hi ${customer.FirstName},
+You currently have ${installedOrders.length} installed orders.
+Would you like to remove a sign from one of your installed orders?
+Please select a number to remove that order:
+`;
+    message += installedOrders.reduce((propertyList, order, orderNum) => propertyList + `${orderNum + 1}:\t${order.PropertyAddress}\n`, "" ); 
   } else {
     message =  'Welcome to Simple Sign Delivery automated ordering system for sign pick-up and delivery.\n';
     message += 'Please reply with your Full Name';
@@ -44,8 +44,10 @@ const getCustomerByPhoneNumber = async (phoneNumber) => {
 const getInstalledOrders = async (customer) => {
   let installedOrders = await prisma.order.findMany({
     where: {
-      Fullfillment: null,
-      CustomerID: customer.CustomerID
+      AND: {
+        Fullfillment: null,
+        CustomerID: customer.CustomerID
+      },
     },
     select: {
       PropertyAddress: true
