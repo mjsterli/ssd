@@ -37,7 +37,7 @@ async function main() {
     create: {
       FirstName: "Sullivan",
       LastName: "Goldie",
-      PhoneNumber: "5046197753",
+      PhoneNumber: "2144941167",
       EmailAddress: "sullivan.goldie@aol.com"
     }
   });
@@ -75,6 +75,18 @@ async function main() {
       LastName: "Stokes",
       PhoneNumber: "7546329514",
       EmailAddress: "latrelle.stokes@hotmail.com"
+    }
+  });
+  const lynell_johnson = await prisma.customer.upsert({
+    where: {
+      EmailAddress: ""
+    },
+    update: {},
+    create: {
+      FirstName: "Lynell",
+      LastName: "Johnson",
+      PhoneNumber: "2145631193",
+      EmailAddress: "yourrealtorfriendlj@gmail.com"
     }
   });
   /***  Customers ***/
@@ -261,7 +273,7 @@ async function main() {
       RequestedServiceID: supraIBoxRemoval.RequestServiceID,
       RequestedServiceDate: new Date(2025, 1, 5, 22, 22, 0),
       Occupancy: "Vacant",
-      CustomerID: lindsay.CustomerID
+      CustomerID: lynell_johnson.CustomerID
     }
   });
   const order7 = await prisma.order.upsert({
@@ -275,7 +287,7 @@ async function main() {
       RequestedServiceID: comboBoxRemoval.RequestServiceID,
       RequestedServiceDate: new Date(2022, 11, 4, 3, 4, 0),
       Occupancy: "Vacant",
-      CustomerID: zachery.CustomerID
+      CustomerID: lynell_johnson.CustomerID
     }
   });
   const order8 = await prisma.order.upsert({
@@ -289,7 +301,7 @@ async function main() {
       RequestedServiceID: openHouseSignPlacement.RequestServiceID,
       RequestedServiceDate: new Date(2021, 4, 25),
       Occupancy: "OwnerOccupied",
-      CustomerID: sullivan.CustomerID
+      CustomerID: lynell_johnson.CustomerID
     }
   });
   const order9 = await prisma.order.upsert({
@@ -303,7 +315,7 @@ async function main() {
       RequestedServiceID: realEstateSignInstall.RequestServiceID,
       RequestedServiceDate: new Date(2023, 7, 28),
       Occupancy: "Vacant",
-      CustomerID: latrelle.CustomerID
+      CustomerID: lynell_johnson.CustomerID
     }
   });
   const order10 = await prisma.order.upsert({
@@ -317,7 +329,7 @@ async function main() {
       RequestedServiceID: comboBoxRemoval.RequestServiceID,
       RequestedServiceDate: new Date(2020, 10, 15),
       Occupancy: "Vacant",
-      CustomerID: shawnee.CustomerID
+      CustomerID: lynell_johnson.CustomerID
     }
   });
   const order11 = await prisma.order.upsert({
@@ -331,7 +343,7 @@ async function main() {
       RequestedServiceID: openHouseSignPlacement.RequestServiceID,
       RequestedServiceDate: new Date(2025, 3, 25),
       Occupancy: "TENANT",
-      CustomerID: latrelle.CustomerID
+      CustomerID: lynell_johnson.CustomerID
     }
   });
   /***  Orders  ***/
