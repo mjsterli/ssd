@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { smsReplyGreeting } from './handlers/greeting';
+import { smsTwilioReply } from './handlers/greeting';
 
 const router = Router();
 
-router.post('/webhook', smsReplyGreeting);
+router.post('/webhook', smsTwilioReply);
 
 export default router;
