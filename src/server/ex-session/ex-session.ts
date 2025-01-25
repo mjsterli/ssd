@@ -40,7 +40,7 @@ const twilioReply = async(req, res) => {
   }
 
   if(req.session.views){
-    req.sesison.views++;
+    req.session.views++;
   } else {
     req.session.views = 1;
   }
