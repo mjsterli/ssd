@@ -44,7 +44,7 @@ const twilioReply = async(req, res) => {
   } else {
     req.session.views = 1;
   }
-  smsResponse.message(`Session-Index: ${req.session.index}, Session-Views: ${req.session.views}`);
+  smsResponse.message(`Session-Index: ${states[req.session.index % states.length]}, Session-Views: ${req.session.views}`);
   res
     .type('text/xml')
     .send(smsResponse.toString());
