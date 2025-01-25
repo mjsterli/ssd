@@ -17,6 +17,8 @@ const config = {
   ssl: true
 };
 
+const states = ['Greeting', 'Selection', 'Confirmation', 'Execution'];
+
 const pgPool = new pg.Pool(config);
 const pSession = new pgSession(session);
 router.use(session({
@@ -31,7 +33,10 @@ router.use(session({
 
 const twilioReply = async(req, res) => {
   const smsResponse = new twiml.MessagingResponse();
-  smsResponse.message(`SessionID: ${req.session.id}`);
+  req.session.index = req.session.index
+                      ? req.session.index + 1
+                      : 0;
+  smsResponse.message(`Session: ${states[req.session.index % states.length]}`);
   res
     .type('text/xml')
     .send(smsResponse.toString());
