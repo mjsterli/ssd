@@ -33,10 +33,18 @@ router.use(session({
 
 const twilioReply = async(req, res) => {
   const smsResponse = new twiml.MessagingResponse();
-  req.session.index = req.session.index
-                      ? req.session.index + 1
-                      : 0;
-  smsResponse.message(`Session: ${req.session.index}`);
+  if(req.session.index){
+    req.session.index++;
+  } else {
+    req.session.index = 1;
+  }
+
+  if(req.session.views){
+    req.sesison.views++;
+  } else {
+    req.session.views = 1;
+  }
+  smsResponse.message(`Session-Index: ${req.session.index}, Session-Views: ${req.session.views}`);
   res
     .type('text/xml')
     .send(smsResponse.toString());
