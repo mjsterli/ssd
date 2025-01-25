@@ -26,7 +26,7 @@ router.use(session({
   }),
   secret: 'secret',
   resave: false,
-  cookie: { maxAge: 10000 }
+  cookie: { maxAge: 1000 * 60 * 5 }
 }));
 
 const twilioReply = async(req, res) => {
