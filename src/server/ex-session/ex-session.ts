@@ -36,7 +36,7 @@ const twilioReply = async(req, res) => {
   req.session.index = req.session.index
                       ? req.session.index + 1
                       : 0;
-  smsResponse.message(`Session: ${states[req.session.index % states.length]}`);
+  smsResponse.message(`Session: ${req.session.index}`);
   res
     .type('text/xml')
     .send(smsResponse.toString());
