@@ -1,7 +1,6 @@
 import express from 'express';
 import apiRouter from './api/apiRouter';
 import twilioRouter from './twilio/twilioRouter';
-import sessionRouter from './ex-session/ex-session';
 //import morgan from 'morgan'
 //import cors from 'cors'
 //import { protect } from './modules/auth'

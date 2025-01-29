@@ -291,10 +291,11 @@ async function confirmOrder({session, body: {Body: body}}) {
 };
 
 export const smsTwilioReply = async (req, res) => {
-  let session = req.session;
+  let { session: { ssdState }, body: { Body: body } } = req;
   let smsResponse = new twiml.MessagingResponse();
+  console.log(`body: ${body}`);
+  smsResponse.message(await (ssdStates[ssdState] ?? initializeCustomer)(req));
 
-  smsResponse.message(await (ssdStates[session.ssdState] ?? initializeCustomer)(req));
   res
     .type('text/xml')
     .send(smsResponse.toString());
