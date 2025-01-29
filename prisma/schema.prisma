@@ -34,6 +34,7 @@ model Customer {
   Orders       Order[]
 }
 
+
 model Order {
   OrderID              String            @id @default(uuid())
   CreatedAt            DateTime          @default(now())

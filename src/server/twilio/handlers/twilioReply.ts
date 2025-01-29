@@ -123,16 +123,17 @@ async function getCustomerWithOrders(customerPhoneNumber){
 // };
 
 async function initializeCustomer(request){
-  let customer = await getCustomerWithOrders(request.body.From);
-  request.session.isNewCustomer = !!customer;
-  request.session.customer = customer ?? {};
-  request.session.ssdState = !customer 
+  let { session, body: { From: from, Body: body }} = request;
+  let customer = await getCustomerWithOrders(from);
+  session.isNewCustomer = !!customer;
+  session.customer = customer ?? {};
+  session.ssdState = !customer 
                               ? "newCustomer" 
                               : customer.Orders
                                 ? "display"
                                 : "install";
 
-  return ssdStates[request.session.ssdState](request);
+  return ssdStates[session.ssdState](request);
 };
 
 async function newCustomer({session, body: {From: from, Body: body}}){
@@ -317,20 +318,4 @@ const getCustomerByPhoneNumberWithOrders = async (phoneNumber) => {
   });
 
   return customer;
-};
-
-const getInstalledOrders = async (customer) => {
-  let installedOrders = await prisma.order.findMany({
-    where: {
-      AND: {
-        Fullfillment: null,
-        CustomerID: customer.CustomerID
-      },
-    },
-    select: {
-      PropertyAddress: true
-    }
-  });
-
-  return installedOrders;
 };
