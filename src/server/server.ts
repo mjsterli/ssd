@@ -15,7 +15,7 @@ app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
 app.use('/api', apiRouter);
-app.use('/twilio', sessionRouter);
+app.use('/twilio', twilioRouter);
 // app.use('/ex-session', );
 
 export default app
