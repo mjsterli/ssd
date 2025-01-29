@@ -31,7 +31,7 @@ model Customer {
   LastName     String
   PhoneNumber  String  @unique
   EmailAddress String  @unique
-  Order        Order[]
+  Orders        Order[]
 }
 
 model Order {
