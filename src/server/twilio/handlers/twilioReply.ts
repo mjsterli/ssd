@@ -10,7 +10,7 @@ const ssdStates = {
   "newCustomer" : newCustomer,
   "display"     : displayOrders,
   "install"     : installOrder,
-  // "remove"      : removeOrder,
+  "remove"      : removeOrder,
   "confirm"     : confirmOrder
 };
 
@@ -109,8 +109,21 @@ async function installOrder({session: {ssdState, ssdProcess, customer}, body: {B
       message += '1) Vacant\n';
       message += '2) Owner Occupied\n';
       message += '3) Tenant Occupied\n';
-      session.ssdState = "confirm";
-      session.ssdProcess = "install";
+      ssdState = "confirm";
+      ssdProcess = "install";
+      break;
+  }
+
+  return message;
+};
+
+async function removeOrder({session: { ssdProcess }, body: {Body: body}}){
+  let message = "";
+
+  switch(ssdProcess){
+    case "date":
+      message += "What date would you like the sign removed?\n";
+      message += "Please enter in the format MM/DD/YY";
       break;
   }
 
@@ -130,9 +143,9 @@ async function displayOrders(request){
       } else {
         let orderNum = +body;
         customer.Orders[orderNum-1].remove = true;
+        ssdState = "remove";
         ssdProcess = "date";
-        message += "What date would you like the sign removed?\n";
-        message += "Please enter in the format MM/DD/YY";
+        message += removeOrder(request);
       }
       break;
       
