@@ -32,78 +32,79 @@ async function initializeCustomer(request){
   return ssdStates[session.ssdState](request);
 };
 
-async function newCustomer({session, body: {From: from, Body: body}}){
+async function newCustomer({session: {ssdState, ssdProcess, customer}, body: {From: from, Body: body}}){
   let message = '';
 
-  switch(session.ssdProcess){
+  switch(ssdProcess){
     case "name":
-      session.customer.Name = body;
-      message += `Hi ${session.customer.Name}\n`; //change to parsed name
+      customer.Name = body;
+      message += `Hi ${customer.Name}\n`; //change to parsed name
       message += 'Please reply with your Email Address.\n';
-      session.ssdProcess = "email";
+      ssdProcess = "email";
       break;
     
     case "email":
-      session.customer.Email = body;
+      customer.Email = body;
       message += 'What Real Estate Brokerage are you associated with?';
-      session.ssdProcess = "brokerage";
+      ssdProcess = "brokerage";
       break;
     
     case "brokerage":
-      session.customer.Brokerage = body;
+      customer.Brokerage = body;
       message += 'Please reply with corresponding number of the Simple Installation Service Requested:\n';
       message += '1) Real Estate Sign\n';
       message += '2) Supra iBox\n';
       message += '3) Combo Lock Box\n';
       message += '4) Open House Sign Placement\n';
-      session.ssdState = "install";
-      session.ssdProcess = "address"
+      ssdState = "install";
+      ssdProcess = "address"
       break;
 
     default:
       message += 'Welcome to Simple Sign Delivery automated ordering system for sign pick-up and delivery.\n';
       message += 'To start your order, please with your full name.'
-      session.customer.PhoneNumber = from;
-      session.ssdProcess = "name";
+      customer.PhoneNumber = from;
+      ssdProcess = "name";
       break;
   }
 
   return message;
 };
 
-async function installOrder({session, body: {Body: body}}){
+async function installOrder({session: {ssdState, ssdProcess, customer}, body: {Body: body}}){
   let message = '';
-  switch(session.ssdProcess){
+
+  switch(ssdProcess){
     case "address":
       message += 'What is the property address that you would like to have you sign delivered to?\n'
-      session.ssdProcess = "county";
+      ssdProcess = "county";
       break;
 
     case "county":
-      session.customer.newOrder = {};
-      session.customer.newOrder.PropertyAddress = body;
+      customer.newOrder = {};
+      customer.newOrder.PropertyAddress = body;
       message += "Which county is the property located?";
-      session.ssdProcess = "service"
+      ssdProcess = "service"
       break;
 
     case "service":
-      session.customer.newOrder.PropertyCounty = body;
+      customer.newOrder.PropertyCounty = body;
       message += 'Please reply with corresponding number of the Simple Installation Service Requested:\n';
       message += '1) Real Estate Sign\n';
       message += '2) Supra iBox\n';
       message += '3) Combo Lock Box\n';
       message += '4) Open House Sign Placement\n';
-      session.ssdProcess = 'date';
+      ssdProcess = 'date';
       break;
 
     case "date":
-      session.customer.newOrder.RequestedServiceDate = body;
+      customer.newOrder.RequestedServiceDate = body;
       message += 'What date would you like your service request to be fullfilled?\n';
-      session.ssdProcess = 'occupancy';
+      ssdProcess = 'occupancy';
       break;
   
     case "occupancy":
-      session.customer.newOrder.Occupancy = body;
+      customer.newOrder.Occupancy = body;
       message += 'Please reply with the corresponding number for Property Occupancy.\n\n';
       message += '1) Vacant\n';
       message += '2) Owner Occupied\n';
@@ -153,28 +154,28 @@ async function displayOrders(request){
   return message;
 };
 
-async function confirmOrder({session, body: {Body: body}}) {
+async function confirmOrder({session: {ssdState, ssdProcess, customer, serviceDate}, body: {Body: body}}) {
   let message = '', order;
-  switch(session.ssdProcess){
+  switch(ssdProcess){
     case "install":
-      order = session.customer.newOrder;
+      order = customer.newOrder;
       message += "Please confirm the order install:\n";
       message += `${order.PropertyAddress}\n`;
       message += `Removal Date: ${order.RequestedServiceDate}\n\n`;
       message += `County: ${order.PropertyCounty}\n\n`;
       message += '(C) to Confirm';
-      session.ssdState = "confirm";
-      session.ssdProcess = "";
+      ssdState = "confirm";
+      ssdProcess = "";
       break;
 
     case "remove":
-      order = session.customer.Orders.find((order) => order.remove);
+      order = customer.Orders.find((order) => order.remove);
       message += "Please confirm the order removal:\n";
       message += `${order.PropertyAddress}\n`;
-      message += `Removal Date: ${session.serviceDate}\n\n`;
+      message += `Removal Date: ${serviceDate}\n\n`;
       message += '(C) to Confirm';
-      session.ssdState = "confirm";
-      session.ssdProcess = "";
+      ssdState = "confirm";
+      ssdProcess = "";
       break;
 
     default:
