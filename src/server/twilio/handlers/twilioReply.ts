@@ -5,78 +5,6 @@ function validatePhoneNumber(phoneNumber){
   return phoneNumber.slice(2);
 }
 
-// async function greeting({ session, reqBody }){
-//   let greeting;
-//   if(session.ssdState.state.subState){
-//     switch(session.ssdState.state.subState){
-//       case "occupancy":
-//         greeting += 'Please reply with the corresponding number for Property Occupancy.\n\n';
-//         greeting += '1) Vacant\n';
-//         greeting += '2) Owner Occupied\n';
-//         greeting += '3) Tenant Occupied\n';
-//         break;
-
-//       case "date":
-//         greeting += 'What date would you like your service request to be fullfilled?\n';
-//         session.ssdState.state.subState = 'occupancy';
-//         break;
-
-//       case "service":
-//         greeting += 'Please reply with corresponding number of the Simple Installation Service Requested:\n';
-//         greeting += '1) Real Estate Sign\n';
-//         greeting += '2) Supra iBox\n';
-//         greeting += '3) Combo Lock Box\n';
-//         greeting += '4) Open House Sign Placement\n';
-//         session.ssdState.state.subState = 'date';
-//         break;
-
-//       case "address":
-//         greeting += 'What is the property address that you would like to have you sign delivered to?\n'
-//         session.ssdState.state.subState = 'service';
-//         break;
-
-//       case "brokerage":
-//         greeting += `Hi ${session.customer.FullName}\n`; //change to parsed name
-//         greeting += 'What Real Estate Brokerage are you associated with?';
-//         session.ssdState.state.subState = 'address';
-//         break;
-
-//       default:
-//         greeting += 'Please reply with your full name\n';
-//         session.ssdState.state.subState = "brokerage";
-//         break;
-//     }
-//   } else {
-//     let customerPhoneNumber = reqBody.From;
-//     let customer = await getCustomerByPhoneNumber(validatePhoneNumber(customerPhoneNumber)); //have a way to be consistent with country code
-    
-//     greeting = 'Welcome to Simple Sign Delivery automated ordering system for sign pick-up and delivery.\n';
-//     if(customer){
-//       session.customer = customer;
-
-//       let installedOrders = await getInstalledOrders(customer);
-//       if(installedOrders){
-//         session.installedOrders = installedOrders;
-
-//         greeting =  `Hi ${customer.FirstName},\n`;
-//         greeting += `You currently have ${installedOrders.length} installed orders.\n`;
-//         greeting += 'Would you like to remove a sign from one of your installed orders?\n';
-//         greeting += 'Please select a number to remove that order:\n';
-//         greeting += installedOrders.reduce((propertyList, order, orderNum) => propertyList + `${orderNum + 1}\) ${order.PropertyAddress}\n`, "" ); 
-//       } else {
-//         greeting =  `Hi ${customer.FirstName},\n`;
-//         greeting += 'Please reply with corresponding number of the Simple Installation Service Requested:\n';
-//         greeting += '1) Real Estate Sign\n';
-//         greeting += '2) Supra iBox\n';
-//         greeting += '3) Combo Lock Box\n';
-//         greeting += '4) Open House Sign Placement\n';
-//       }
-//     } 
-//   }
-
-//   return greeting;
-// };
-
 const ssdStates = {
   "initCustomer": initializeCustomer,
   "newCustomer" : newCustomer,
@@ -89,38 +17,6 @@ const ssdStates = {
 async function getCustomerWithOrders(customerPhoneNumber){
   return await getCustomerByPhoneNumberWithOrders(validatePhoneNumber(customerPhoneNumber)); //have a way to be consistent with country code
 };
-
-// async function initializeConversation({session, reqBody}){
-//   let message,
-//       customer = await getCustomer(reqBody.From);
-  
-//   if(!customer){
-//     session.ssdState = "initCustomer";
-//     message = initializeCustomer(session, reqBody);
-//   } else {
-//     session.customer = customer;
-//     message = `Hi ${customer.FirstName},\n`;
-
-//     let installedOrders = await getInstalledOrders(customer);
-//     if(installedOrders){
-//       session.customer.installedOrders = installedOrders;
-//       message += `You currently have ${installedOrders.length} installed orders.\n`;
-//       message += 'Would you like to remove a sign from one of your installed orders?\n';
-//       message += 'Please select a number to remove that order or "0" to start a new install:\n';
-//       message += '0) New install\n';
-//       message += installedOrders.reduce((propertyList, order, orderNum) => propertyList + `${orderNum + 1}\) ${order.PropertyAddress}\n`, "" ); 
-//     } else {
-//       message =  `Hi ${customer.FirstName},\n`;
-//       message += 'Please reply with corresponding number of the Simple Installation Service Requested:\n';
-//       message += '1) Real Estate Sign\n';
-//       message += '2) Supra iBox\n';
-//       message += '3) Combo Lock Box\n';
-//       message += '4) Open House Sign Placement\n';
-//     }
-//   }
-  
-//   return message;
-// };
 
 async function initializeCustomer(request){
   let { session, body: { From: from, Body: body }} = request;
