@@ -17,15 +17,18 @@
   },
   "dependencies": {
     "@prisma/client": "^4.4.0",
+    "@types/parse-full-name": "^1.2.5",
     "bcrypt": "^5.0.1",
     "connect-pg-simple": "^10.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.2",
     "express": "^4.18.1",
     "express-session": "^1.18.1",
-    "express-validator": "^6.14.2",
+    "express-validator": "^6.15.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
+    "parse-address": "^1.1.2",
+    "parse-full-name": "^1.2.6",
     "twilio": "^5.4.2"
   },
   "devDependencies": {
