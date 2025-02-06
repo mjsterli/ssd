@@ -1,20 +1,23 @@
 import express from 'express';
 import apiRouter from './api/apiRouter';
 import twilioRouter from './twilio/twilioRouter';
-//import morgan from 'morgan'
-//import cors from 'cors'
-//import { protect } from './modules/auth'
-//import { createNewUser, signin } from './handlers/user'
 
 const app = express()
 
-//app.use(cors())
-//app.use(morgan('dev'))
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
+
+const validateInput = (req, res, next)  => {
+  if(req.session?.ssdState && req.session?.ssdProcess){
+    console.log(`ssdState:ssdProcess => ${req.session.ssdState}:${req.session.ssdProcess}`);
+  }
+  next();
+};
+
 app.use('/api', apiRouter);
-app.use('/twilio', twilioRouter);
-// app.use('/ex-session', );
+app.use('/twilio', validateInput, twilioRouter);
+
+
 
 export default app

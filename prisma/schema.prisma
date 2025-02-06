@@ -27,10 +27,14 @@ enum PropertyOccupancy {
 
 model Customer {
   CustomerID   String  @id @default(uuid())
+  Title        String?
   FirstName    String
+  MiddleName   String?
   LastName     String
+  Suffix       String?
   PhoneNumber  String  @unique
   EmailAddress String  @unique
+  Brokerage    String
   Orders       Order[]
 }
 

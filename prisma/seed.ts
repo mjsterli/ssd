@@ -14,7 +14,8 @@ async function main() {
       FirstName: "Lindsay",
       LastName: "Gilbert",
       PhoneNumber: "5081994316",
-      EmailAddress: "lindsay.gilbert@gmail.com"
+      EmailAddress: "lindsay.gilbert@gmail.com",
+      Brokerage: 'Keller Williams'
     }
   });
   const camilla = await prisma.customer.upsert({
@@ -26,7 +27,8 @@ async function main() {
       FirstName: "Camilla",
       LastName: "Mercy",
       PhoneNumber: "4017591138",
-      EmailAddress: "camilla.mercy@hotmail.com"
+      EmailAddress: "camilla.mercy@hotmail.com",
+      Brokerage: 'Keller Williams'
     }
   });
   const sullivan = await prisma.customer.upsert({
@@ -35,10 +37,11 @@ async function main() {
     },
     update: {},
     create: {
-      FirstName: "Sullivan",
+      FirstName: "ullivan",
       LastName: "Goldie",
       PhoneNumber: "2144941167",
-      EmailAddress: "sullivan.goldie@aol.com"
+      EmailAddress: "sullivan.goldie@aol.com",
+      Brokerage: 'Century 21'
     }
   });
   const zachery = await prisma.customer.upsert({
@@ -50,7 +53,9 @@ async function main() {
       FirstName: "Zachery",
       LastName: "Caelan",
       PhoneNumber: "5099671900",
-      EmailAddress: "zachery.caelan@msn.com"
+      EmailAddress: "zachery.caelan@msn.com",
+      Brokerage: 'Century 21'
+
     }
   });
   const shawnee = await prisma.customer.upsert({
@@ -62,7 +67,8 @@ async function main() {
       FirstName: "Shawnee",
       LastName: "Jordan",
       PhoneNumber: "4527896352",
-      EmailAddress: "shawnee.jordan@gmail.com"
+      EmailAddress: "shawnee.jordan@gmail.com",
+      Brokerage: 'Jones Realty'
     }
   });
   const latrelle = await prisma.customer.upsert({
@@ -74,7 +80,8 @@ async function main() {
       FirstName: "Latrelle",
       LastName: "Stokes",
       PhoneNumber: "7546329514",
-      EmailAddress: "latrelle.stokes@hotmail.com"
+      EmailAddress: "latrelle.stokes@hotmail.com",
+      Brokerage: 'Keller Williams'
     }
   });
   const lynell_johnson = await prisma.customer.upsert({
@@ -86,7 +93,8 @@ async function main() {
       FirstName: "Lynell",
       LastName: "Johnson",
       PhoneNumber: "2145631193",
-      EmailAddress: "yourrealtorfriendlj@gmail.com"
+      EmailAddress: "yourrealtorfriendlj@gmail.com",
+      Brokerage: 'Jones Realty'
     }
   });
   /***  Customers ***/
