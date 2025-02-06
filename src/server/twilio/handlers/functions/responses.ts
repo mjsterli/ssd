@@ -7,12 +7,18 @@ export async function initializeCustomer({session, body: { From: from }}){
   let customer = await getCustomerByPhoneNumberWithOrders(from);
   session.customer = customer ?? {};
   session.customer.PhonerNumber = from;
-  session.ssdState = !customer 
-                      ? "newCustomer" 
-                      : customer.Orders
-                        ? "display"
-                        : "install";
-  session.ssdProcess = 'init';
+  if(!customer){
+    session.ssdState = 'newCustomer';
+    session.ssdProcess = 'init';
+  }
+  else if(customer.Orders.length > 0){
+    session.ssdState = 'display';
+    session.ssdProcess = 'init';
+  }
+  else {
+    session.ssdState = 'install';
+    session.ssdProcess = 'newOrder';
+  }
 };
 
 const getCustomerByPhoneNumberWithOrders = async (phoneNumber) => {
@@ -103,7 +109,8 @@ export async function setInstallConfirmation(req){
 
 export async function setRemovalConfirmation(req){
   const isConfirmed = matchedData(req).Body.toLowerCase() == 'c';
-  req.session.customer.newOrder.isConfirmed = isConfirmed; //Find the new order
+  const orderToRemove = req.session.customer.Orders.find(order => order.Remove);
+  orderToRemove.isConfirmed = isConfirmed;
 };
 
 export async function setRemovalDate(req){

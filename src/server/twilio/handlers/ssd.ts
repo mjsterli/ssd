@@ -60,6 +60,12 @@ export const ssd = {
         process: 'address'
       }
     },
+    newOrder: {
+      reply: replies.greetWithNewOrder,
+      next: {
+        process: 'address'
+      }
+    },
     address: {
       validation: body('Body').notEmpty().withMessage('Please enter a valid US mailing address.'),
       response: responses.setPropertyAddress,

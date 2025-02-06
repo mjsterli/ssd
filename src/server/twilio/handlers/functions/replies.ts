@@ -5,6 +5,13 @@ export async function greetNewCustomer(){
   return message;
 };
 
+export async function greetWithNewOrder({session: {customer}}){
+  let message =  `Welcome back ${customer.FirstName} to Simple Sign Delivery automated ordering system for sign pick-up and delivery.\n`;
+      message += 'What is the property address that you would like to have you sign delivered to?\n'
+
+  return message;
+};
+
 export async function getEmail({ session }){
   let message =  `Hi ${session.customer.Name}\n`;
       message += 'Please reply with your Email Address.\n';
