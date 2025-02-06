@@ -1,6 +1,6 @@
 package-lock.json
-node_modules/**/*
+node_modules
 *.env
 prisma/migrations/**/*
 .vscode
-dist/**/*/
+dist
