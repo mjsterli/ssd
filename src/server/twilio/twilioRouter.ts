@@ -19,7 +19,7 @@ function getSessionConfig(){
     host: databaseConfig.hostname,
     port: databaseConfig.port,
     database: database,
-    ssl: false
+    ssl: true
   };
 };
 
@@ -34,7 +34,7 @@ router.use(session({
   secret: process.env.SECRET_KEY,
   resave: false,
   saveUninitialized: true,
-  cookie: { maxAge: 1000 * 60 * 5}
+  cookie: { maxAge: 1000 * 60 * 2}
 }));
 
 router.post('/webhook', smsTwilioValidate, smsTwilioResponse, smsTwilioReply);
