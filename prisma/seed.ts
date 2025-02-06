@@ -101,58 +101,31 @@ async function main() {
 
   
   /***  Request Services ***/
-  const realEstateSignInstall = await prisma.requestService.upsert({
+  const realEstateSign = await prisma.requestService.upsert({
     where: {
       RequestServiceID: ""
     },
     update: {},
     create: {
-      Description: "Real Estate Sign Install"
+      Description: "Real Estate Sign"
     }
   });
-  const realEstateSignRemoval = await prisma.requestService.upsert({
+  const supraIBox = await prisma.requestService.upsert({
     where: {
       RequestServiceID: ""
     },
     update: {},
     create: {
-      Description: "Real Estate Sign Removal"
+      Description: "Supra iBox"
     }
   });
-  const supraIBoxInstall = await prisma.requestService.upsert({
+  const comboBox = await prisma.requestService.upsert({
     where: {
       RequestServiceID: ""
     },
     update: {},
     create: {
-      Description: "Supra iBox Install"
-    }
-  });
-  const supraIBoxRemoval = await prisma.requestService.upsert({
-    where: {
-      RequestServiceID: ""
-    },
-    update: {},
-    create: {
-      Description: "Supra iBox Removal"
-    }
-  });
-  const comboBoxInstall = await prisma.requestService.upsert({
-    where: {
-      RequestServiceID: ""
-    },
-    update: {},
-    create: {
-      Description: "Combo Box Install"
-    }
-  });
-  const comboBoxRemoval = await prisma.requestService.upsert({
-    where: {
-      RequestServiceID: ""
-    },
-    update: {},
-    create: {
-      Description: "Combo Box Removal"
+      Description: "Combo Box"
     }
   });
   const openHouseSignPlacement = await prisma.requestService.upsert({
@@ -208,7 +181,7 @@ async function main() {
     create: {
       PropertyAddress: "4739 Bradford St. Plano, TX. 75024",
       PropertyCounty: "Collin",
-      RequestedServiceID: supraIBoxRemoval.RequestServiceID,
+      RequestedServiceID: supraIBox.RequestServiceID,
       RequestedServiceDate: new Date(2023, 10, 23, 15, 34, 0),
       Occupancy: "OwnerOccupied",
       CustomerID: zachery.CustomerID
@@ -222,7 +195,7 @@ async function main() {
     create: {
       PropertyAddress: "29188 Amberly Ct. Little Elm, TX. 75068",
       PropertyCounty: "Denton",
-      RequestedServiceID: supraIBoxInstall.RequestServiceID,
+      RequestedServiceID: supraIBox.RequestServiceID,
       RequestedServiceDate: new Date(2024, 2, 28, 8, 57, 0),
       Occupancy: "TENANT",
       CustomerID: camilla.CustomerID
@@ -250,7 +223,7 @@ async function main() {
     create: {
       PropertyAddress: "11819 Sycamore Dr. Mckinney, TX. 75071",
       PropertyCounty: "Collin",
-      RequestedServiceID: realEstateSignInstall.RequestServiceID,
+      RequestedServiceID: realEstateSign.RequestServiceID,
       RequestedServiceDate: new Date(2025, 1, 5, 22, 22, 0),
       Occupancy: "Vacant",
       CustomerID: sullivan.CustomerID
@@ -264,7 +237,7 @@ async function main() {
     create: {
       PropertyAddress: "38492 Knight Ave. Dallas, TX. 75022",
       PropertyCounty: "Dallas",
-      RequestedServiceID: realEstateSignInstall.RequestServiceID,
+      RequestedServiceID: realEstateSign.RequestServiceID,
       RequestedServiceDate: new Date(2025, 1, 15, 1, 2, 0),
       Occupancy: "OwnerOccupied",
       CustomerID: sullivan.CustomerID
@@ -278,7 +251,7 @@ async function main() {
     create: {
       PropertyAddress: "97857 Amber Ave. Dallas, TX. 75022",
       PropertyCounty: "Dallas",
-      RequestedServiceID: supraIBoxRemoval.RequestServiceID,
+      RequestedServiceID: supraIBox.RequestServiceID,
       RequestedServiceDate: new Date(2025, 1, 5, 22, 22, 0),
       Occupancy: "Vacant",
       CustomerID: lynell_johnson.CustomerID
@@ -292,7 +265,7 @@ async function main() {
     create: {
       PropertyAddress: "5642 Bay Lane. Frisco, TX. 75024",
       PropertyCounty: "Collin",
-      RequestedServiceID: comboBoxRemoval.RequestServiceID,
+      RequestedServiceID: comboBox.RequestServiceID,
       RequestedServiceDate: new Date(2022, 11, 4, 3, 4, 0),
       Occupancy: "Vacant",
       CustomerID: lynell_johnson.CustomerID
@@ -320,7 +293,7 @@ async function main() {
     create: {
       PropertyAddress: "3474 Vista St. Rowlett, TX. 75032",
       PropertyCounty: "Rowlett",
-      RequestedServiceID: realEstateSignInstall.RequestServiceID,
+      RequestedServiceID: realEstateSign.RequestServiceID,
       RequestedServiceDate: new Date(2023, 7, 28),
       Occupancy: "Vacant",
       CustomerID: lynell_johnson.CustomerID
@@ -334,7 +307,7 @@ async function main() {
     create: {
       PropertyAddress: "4671 Copper Ln. Fort Worth, TX. 75045",
       PropertyCounty: "Tarrant",
-      RequestedServiceID: comboBoxRemoval.RequestServiceID,
+      RequestedServiceID: comboBox.RequestServiceID,
       RequestedServiceDate: new Date(2020, 10, 15),
       Occupancy: "Vacant",
       CustomerID: lynell_johnson.CustomerID
