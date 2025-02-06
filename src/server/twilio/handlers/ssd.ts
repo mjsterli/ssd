@@ -127,6 +127,12 @@ export const ssd = {
     }
   },
   remove: {
+    init: {
+      reply: replies.getRemovalDate,
+      next: {
+        process: 'date'
+      }
+    },
     date: {
       validation: body('Body').notEmpty().isDate().withMessage('Please enter a valid removal date in the form of "MM/DD/YYYY".'),
       response: responses.setRemovalDate,

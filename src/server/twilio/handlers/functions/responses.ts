@@ -26,7 +26,14 @@ const getCustomerByPhoneNumberWithOrders = async (phoneNumber) => {
       CustomerID: true,
       Orders: {
         select: {
-          PropertyAddress: true
+          PropertyAddress: true,
+          PropertyCounty: true,
+          RequestedService: {
+            select: {
+              Description: true
+            }
+          },
+          Occupancy: true
         }
       }
     }
@@ -105,14 +112,16 @@ export async function setRemovalDate(req){
 };
 
 export async function setOrderSelection(req){
+  const {session: {customer}} = req;
   const orderSelection = +matchedData(req).Body;
+
   if(orderSelection == 0){
     req.session.ssdState =    'install';
     req.session.ssdProcess =  'init';
   }
   else{
     req.session.ssdState =    'remove';
-    req.session.ssdProcess =  'date';
+    req.session.ssdProcess =  'init';
+    customer.Orders[orderSelection-1].Remove = true;
   }
-  req.session.OrderSelection = orderSelection;
 };

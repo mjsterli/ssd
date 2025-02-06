@@ -38,6 +38,10 @@ export async function getServiceDate(){
   return 'What date would you like your service request to be fullfilled?\n';
 };
 
+export async function getRemovalDate(){
+  return 'What date would you like your sign removed?\n';
+};
+
 export async function getOccupancy(){
   let message =  'Please reply with the corresponding number for Property Occupancy.\n\n';
       message += '1) Vacant\n';
@@ -78,7 +82,8 @@ const services = [
 ];
 
 export async function getOrderSelection({session: {customer}}){
-  let message = `You currently have ${customer.Orders.length} installed orders.\n`;
+  let message =  `Welcome back ${customer.FirstName} to Simple Sign Delivery automated ordering system for sign pick-up and delivery.\n`;
+      message += `You currently have ${customer.Orders.length} installed orders.\n`;
       message += 'Would you like to remove a sign from one of your installed orders?\n';
       message += 'Please select a number to remove that order or "0" to start a new install:\n';
       message += '0) New install\n';
@@ -88,13 +93,13 @@ export async function getOrderSelection({session: {customer}}){
 };
 
 export async function getRemovalConfirmation({session}){
-  let order = session.customer.Orders.findFirst(order => order.Remove);
-  let message =  "Please confirm the order remove:\n";
+  let order = session.customer.Orders.find(order => order.Remove);
+  let message =  "Please confirm the order to remove:\n";
       message += `Address:      ${order.PropertyAddress}\n`;
-      message += `County:       ${order.County}\n`;
-      message += `Service:      ${services[+order.Service-1]}\n`;
+      message += `County:       ${order.PropertyCounty}\n`;
+      message += `Service:      ${order.RequestedService.Description}\n`;
       message += `Service Date: ${session.RemovalDate}\n`;
-      message += `Occupancy:    ${occupancies[+order.Occupancy-1]}\n\n`;
+      message += `Occupancy:    ${order.Occupancy}\n\n`;
       message += '(C) to Confirm or (N) to Cancel';
 
   return message;
