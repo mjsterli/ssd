@@ -23,7 +23,7 @@ export const getOrder = async (req, res) => {
           Description: true
         }
       },
-      RequestedServiceDate: true,
+      RequestedInstallDate: true,
       Occupancy: true,
       belongsTo: {
         select: {

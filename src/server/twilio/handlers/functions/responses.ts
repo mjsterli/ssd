@@ -39,7 +39,11 @@ const getCustomerByPhoneNumberWithOrders = async (phoneNumber) => {
       LastName: true,
       CustomerID: true,
       Orders: {
+        where: {
+          RequestedRemoveDate: null
+        },
         select: {
+          OrderID: true,
           PropertyAddress: true,
           PropertyCounty: true,
           RequestedService: {
@@ -97,12 +101,12 @@ export async function setCounty(req){
 
 export async function setService(req){
   const service = matchedData(req).Body;
-  req.session.customer.newOrder.RequestedServiceID = +service;
+  req.session.customer.newOrder.RequestServiceID = +service;
 };
 
 export async function setServiceDate(req){
   const serviceDate = matchedData(req).Body;
-  req.session.customer.newOrder.RequestedInstallDate = new Date(serviceDate);
+  req.session.customer.newOrder.RequestedInstallDate = serviceDate;
 };
 
 export async function setOccupancy(req){
@@ -123,7 +127,7 @@ export async function setRemovalConfirmation(req){
 
 export async function setRemovalDate(req){
   const removalDate = matchedData(req).Body;
-  req.session.RemovalDate = removalDate;
+  req.session.customer.Orders.find(order => order.Remove).RequestedRemoveDate = removalDate;
 };
 
 export async function setOrderSelection(req){

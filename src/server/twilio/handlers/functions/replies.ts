@@ -1,4 +1,4 @@
-import { PropertyOccupancy } from '@prisma/client';
+import { PropertyOccupancy, Prisma as prismaNamespace } from '@prisma/client';
 import prisma from '../../../db';
 
 export async function greetNewCustomer(){
@@ -61,9 +61,9 @@ export async function getOccupancy(){
 export async function getInstallConfirmation({session: {loadedServices, customer: {newOrder: order}}}){
   let message =  "Please confirm the order install:\n";
       message += `Address:      ${order.PropertyAddress}\n`;
-      message += `County:       ${order.County}\n`;
-      message += `Service:      ${loadedServices.find(service => service.RequestedServiceID == +order.RequestedService).Description}\n`;
-      message += `Service Date: ${order.RequestedServiceDate}\n`;
+      message += `County:       ${order.PropertyCounty}\n`;
+      message += `Service:      ${loadedServices.find(service => service.RequestServiceID == order.RequestServiceID).Description}\n`;
+      message += `Service Date: ${new Date(order.RequestedInstallDate).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}\n`;
       message += `Occupancy:    ${occupancies[+order.Occupancy-1].description}\n\n`;
       message += '(C) to Confirm or (N) to Cancel';
 
@@ -99,7 +99,7 @@ export async function getRemovalConfirmation({session}){
       message += `Address:      ${order.PropertyAddress}\n`;
       message += `County:       ${order.PropertyCounty}\n`;
       message += `Service:      ${order.RequestedService.Description}\n`;
-      message += `Service Date: ${session.RemovalDate}\n`;
+      message += `Service Date: ${new Date(order.RequestedRemoveDate).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}\n`;
       message += `Occupancy:    ${order.Occupancy}\n\n`;
       message += '(C) to Confirm or (N) to Cancel';
 
@@ -113,7 +113,11 @@ async function saveCustomerOrder(session){
     await saveCustomer(customer);
   }
 
-  await saveOrder(customer);
+  if(!!customer.newOrder){
+    await saveOrder(customer);
+  } else {
+    await removeOrder(customer.Orders.find(order => order.Remove));
+  }
 
 };
 
@@ -134,15 +138,26 @@ async function saveCustomer(customer){
   return savedCustomer;
 };
 
-const saveOrder = async ({newOrder: {PropertyAddress, PropertyCounty, RequestedServiceID, RequestedInstallDate, Occupancy}, CustomerID}) => {
+const saveOrder = async ({newOrder: {PropertyAddress, PropertyCounty, RequestServiceID, RequestedInstallDate, Occupancy}, CustomerID}) => {
   await prisma.order.create({
     data: {
       PropertyAddress: PropertyAddress,
       PropertyCounty: PropertyCounty,
-      RequestedServiceID: RequestedServiceID,
-      RequestedInstallDate: RequestedInstallDate,
-      Occupancy: occupancies[Occupancy].dbName,
+      RequestedServiceID: RequestServiceID,
+      RequestedInstallDate: new Date(RequestedInstallDate),
+      Occupancy: occupancies[Occupancy-1].dbName,
       CustomerID: CustomerID
+    }
+  });
+};
+
+const removeOrder = async (order) => {
+  let orderWhere: prismaNamespace.OrderWhereUniqueInput = { OrderID: order.OrderID };
+
+  await prisma.order.update({
+    where: orderWhere,
+    data: {
+      RequestedRemoveDate: new Date(order.RequestedRemoveDate)
     }
   });
 };
