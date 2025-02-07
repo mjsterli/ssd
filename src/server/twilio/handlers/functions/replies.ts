@@ -1,3 +1,6 @@
+import { PropertyOccupancy } from '@prisma/client';
+import prisma from '../../../db';
+
 export async function greetNewCustomer(){
   let message =  'Welcome to Simple Sign Delivery automated ordering system for sign pick-up and delivery.\n';
       message += 'To start your order, please with your full name.'
@@ -31,12 +34,9 @@ export async function getCounty(){
   return "Which county is the property located?";
 };
 
-export async function getService(){
+export async function getService({session}){
   let message =  'Please reply with corresponding number of the Simple Installation Service Requested:\n';
-      message += '1) Real Estate Sign\n';
-      message += '2) Supra iBox\n';
-      message += '3) Combo Lock Box\n';
-      message += '4) Open House Sign Placement\n';
+      message += session.loadedServices.reduce((servicesList, service) => servicesList + `${service.RequestServiceID}) ${service.Description}\n`, "");
 
   return message;
 };
@@ -58,34 +58,28 @@ export async function getOccupancy(){
   return message;
 };
 
-export async function getInstallConfirmation({session: {customer: {newOrder: order}}}){
+export async function getInstallConfirmation({session: {loadedServices, customer: {newOrder: order}}}){
   let message =  "Please confirm the order install:\n";
       message += `Address:      ${order.PropertyAddress}\n`;
       message += `County:       ${order.County}\n`;
-      message += `Service:      ${services[+order.RequestedService-1]}\n`;
+      message += `Service:      ${loadedServices.find(service => service.RequestedServiceID == +order.RequestedService).Description}\n`;
       message += `Service Date: ${order.RequestedServiceDate}\n`;
-      message += `Occupancy:    ${occupancies[+order.Occupancy-1]}\n\n`;
+      message += `Occupancy:    ${occupancies[+order.Occupancy-1].description}\n\n`;
       message += '(C) to Confirm or (N) to Cancel';
 
   return message;
 };
 
 export async function endConversation({session}){
+  await saveCustomerOrder(session);
   session.destroy();
   return 'Your order has been placed.\nThank you for using the Simple Sign Delivery Automated Service.';
 };
 
 const occupancies = [
-  'Vacant',
-  'Owner Occupied',
-  'Tenant Occupied'
-];
-
-const services = [
-  'Real Estate Sign',
-  'Supra iBox',
-  'Combo Lock Box',
-  'Open House Sign Placement'
+  {dbName: PropertyOccupancy.VACANT, description: 'Vacant'},
+  {dbName: PropertyOccupancy.OWNER, description: 'Owner Occupied'},
+  {dbName: PropertyOccupancy.TENANT, description: 'Tenant Occupied'}
 ];
 
 export async function getOrderSelection({session: {customer}}){
@@ -110,4 +104,45 @@ export async function getRemovalConfirmation({session}){
       message += '(C) to Confirm or (N) to Cancel';
 
   return message;
-}
+};
+
+async function saveCustomerOrder(session){
+  let {customer} = session;
+
+  if(!customer.CustomerID){
+    await saveCustomer(customer);
+  }
+
+  await saveOrder(customer);
+
+};
+
+async function saveCustomer(customer){
+  const savedCustomer = await prisma.customer.create({
+    data: {
+      Title: customer.Title,
+      FirstName: customer.FirstName,
+      MiddleName: customer.MiddleName,
+      LastName: customer.LastName,
+      Suffix: customer.Suffix,
+      PhoneNumber: customer.PhoneNumber,
+      EmailAddress: customer.EmailAddress,
+      Brokerage: customer.Brokerage
+    }
+  });
+
+  return savedCustomer;
+};
+
+const saveOrder = async ({newOrder: {PropertyAddress, PropertyCounty, RequestedServiceID, RequestedInstallDate, Occupancy}, CustomerID}) => {
+  await prisma.order.create({
+    data: {
+      PropertyAddress: PropertyAddress,
+      PropertyCounty: PropertyCounty,
+      RequestedServiceID: RequestedServiceID,
+      RequestedInstallDate: RequestedInstallDate,
+      Occupancy: occupancies[Occupancy].dbName,
+      CustomerID: CustomerID
+    }
+  });
+};
