@@ -14,14 +14,14 @@ datasource db {
 }
 
 model RequestService {
-  RequestServiceID String  @id @default(uuid())
+  RequestServiceID Int  @id
   Description      String
   Order            Order[]
 }
 
 enum PropertyOccupancy {
-  Vacant        @map("VACANT")
-  OwnerOccupied @map("OWNER")
+  VACANT        @map("VACANT")
+  OWNER         @map("OWNER")
   TENANT
 }
 
@@ -45,13 +45,14 @@ model Order {
   PropertyAddress      String
   PropertyCounty       String
   RequestedService     RequestService    @relation(fields: [RequestedServiceID], references: [RequestServiceID])
-  RequestedServiceID   String
-  RequestedServiceDate DateTime
+  RequestedServiceID   Int
+  RequestedInstallDate DateTime
+  RequestedRemoveDate  DateTime?
   Occupancy            PropertyOccupancy
   belongsTo            Customer          @relation(fields: [CustomerID], references: [CustomerID])
   CustomerID           String
   Fullfillment         Fullfillment?
-  Attachment           Attachment[]
+  Attachments          Attachment[]
 }
 
 model Employee {

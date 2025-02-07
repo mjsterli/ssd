@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, PropertyOccupancy } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -101,39 +101,27 @@ async function main() {
 
   
   /***  Request Services ***/
-  const realEstateSign = await prisma.requestService.upsert({
-    where: {
-      RequestServiceID: ""
-    },
-    update: {},
-    create: {
+  const realEstateSign = await prisma.requestService.create({
+    data: {
+      RequestServiceID: 1,
       Description: "Real Estate Sign"
     }
   });
-  const supraIBox = await prisma.requestService.upsert({
-    where: {
-      RequestServiceID: ""
-    },
-    update: {},
-    create: {
+  const supraIBox = await prisma.requestService.create({
+    data: {
+      RequestServiceID: 2,
       Description: "Supra iBox"
     }
   });
-  const comboBox = await prisma.requestService.upsert({
-    where: {
-      RequestServiceID: ""
-    },
-    update: {},
-    create: {
+  const comboBox = await prisma.requestService.create({
+    data: {
+      RequestServiceID: 3,
       Description: "Combo Box"
     }
   });
-  const openHouseSignPlacement = await prisma.requestService.upsert({
-    where: {
-      RequestServiceID: ""
-    },
-    update: {},
-    create: {
+  const openHouseSignPlacement = await prisma.requestService.create({
+    data: {
+      RequestServiceID: 4,
       Description: "Open House Sign Placement"
     }
   });
@@ -182,8 +170,8 @@ async function main() {
       PropertyAddress: "4739 Bradford St. Plano, TX. 75024",
       PropertyCounty: "Collin",
       RequestedServiceID: supraIBox.RequestServiceID,
-      RequestedServiceDate: new Date(2023, 10, 23, 15, 34, 0),
-      Occupancy: "OwnerOccupied",
+      RequestedInstallDate: new Date(2023, 10, 23, 15, 34, 0),
+      Occupancy: PropertyOccupancy.OWNER,
       CustomerID: zachery.CustomerID
     }
   });
@@ -196,8 +184,8 @@ async function main() {
       PropertyAddress: "29188 Amberly Ct. Little Elm, TX. 75068",
       PropertyCounty: "Denton",
       RequestedServiceID: supraIBox.RequestServiceID,
-      RequestedServiceDate: new Date(2024, 2, 28, 8, 57, 0),
-      Occupancy: "TENANT",
+      RequestedInstallDate: new Date(2024, 2, 28, 8, 57, 0),
+      Occupancy: PropertyOccupancy.TENANT,
       CustomerID: camilla.CustomerID
     }
   });
@@ -210,8 +198,8 @@ async function main() {
       PropertyAddress: "1221 Napier Dr. Plano, TX. 75024",
       PropertyCounty: "Collin",
       RequestedServiceID: openHouseSignPlacement.RequestServiceID,
-      RequestedServiceDate: new Date(2024, 8, 12, 12, 33, 0),
-      Occupancy: "OwnerOccupied",
+      RequestedInstallDate: new Date(2024, 8, 12, 12, 33, 0),
+      Occupancy: PropertyOccupancy.OWNER,
       CustomerID: lindsay.CustomerID
     }
   });
@@ -224,8 +212,8 @@ async function main() {
       PropertyAddress: "11819 Sycamore Dr. Mckinney, TX. 75071",
       PropertyCounty: "Collin",
       RequestedServiceID: realEstateSign.RequestServiceID,
-      RequestedServiceDate: new Date(2025, 1, 5, 22, 22, 0),
-      Occupancy: "Vacant",
+      RequestedInstallDate: new Date(2025, 1, 5, 22, 22, 0),
+      Occupancy: PropertyOccupancy.VACANT,
       CustomerID: sullivan.CustomerID
     }
   });
@@ -238,8 +226,8 @@ async function main() {
       PropertyAddress: "38492 Knight Ave. Dallas, TX. 75022",
       PropertyCounty: "Dallas",
       RequestedServiceID: realEstateSign.RequestServiceID,
-      RequestedServiceDate: new Date(2025, 1, 15, 1, 2, 0),
-      Occupancy: "OwnerOccupied",
+      RequestedInstallDate: new Date(2025, 1, 15, 1, 2, 0),
+      Occupancy: PropertyOccupancy.OWNER,
       CustomerID: sullivan.CustomerID
     }
   });
@@ -252,8 +240,8 @@ async function main() {
       PropertyAddress: "97857 Amber Ave. Dallas, TX. 75022",
       PropertyCounty: "Dallas",
       RequestedServiceID: supraIBox.RequestServiceID,
-      RequestedServiceDate: new Date(2025, 1, 5, 22, 22, 0),
-      Occupancy: "Vacant",
+      RequestedInstallDate: new Date(2025, 1, 5, 22, 22, 0),
+      Occupancy: PropertyOccupancy.VACANT,
       CustomerID: lynell_johnson.CustomerID
     }
   });
@@ -266,8 +254,8 @@ async function main() {
       PropertyAddress: "5642 Bay Lane. Frisco, TX. 75024",
       PropertyCounty: "Collin",
       RequestedServiceID: comboBox.RequestServiceID,
-      RequestedServiceDate: new Date(2022, 11, 4, 3, 4, 0),
-      Occupancy: "Vacant",
+      RequestedInstallDate: new Date(2022, 11, 4, 3, 4, 0),
+      Occupancy: PropertyOccupancy.VACANT,
       CustomerID: lynell_johnson.CustomerID
     }
   });
@@ -280,8 +268,8 @@ async function main() {
       PropertyAddress: "5372 Old Lane. Irving, TX. 75085",
       PropertyCounty: "Dallas",
       RequestedServiceID: openHouseSignPlacement.RequestServiceID,
-      RequestedServiceDate: new Date(2021, 4, 25),
-      Occupancy: "OwnerOccupied",
+      RequestedInstallDate: new Date(2021, 4, 25),
+      Occupancy: PropertyOccupancy.OWNER,
       CustomerID: lynell_johnson.CustomerID
     }
   });
@@ -294,8 +282,8 @@ async function main() {
       PropertyAddress: "3474 Vista St. Rowlett, TX. 75032",
       PropertyCounty: "Rowlett",
       RequestedServiceID: realEstateSign.RequestServiceID,
-      RequestedServiceDate: new Date(2023, 7, 28),
-      Occupancy: "Vacant",
+      RequestedInstallDate: new Date(2023, 7, 28),
+      Occupancy: PropertyOccupancy.VACANT,
       CustomerID: lynell_johnson.CustomerID
     }
   });
@@ -308,8 +296,8 @@ async function main() {
       PropertyAddress: "4671 Copper Ln. Fort Worth, TX. 75045",
       PropertyCounty: "Tarrant",
       RequestedServiceID: comboBox.RequestServiceID,
-      RequestedServiceDate: new Date(2020, 10, 15),
-      Occupancy: "Vacant",
+      RequestedInstallDate: new Date(2020, 10, 15),
+      Occupancy: PropertyOccupancy.VACANT,
       CustomerID: lynell_johnson.CustomerID
     }
   });
@@ -322,8 +310,8 @@ async function main() {
       PropertyAddress: "98396 Fortune Ave. Denton, TX. 75041",
       PropertyCounty: "Denton",
       RequestedServiceID: openHouseSignPlacement.RequestServiceID,
-      RequestedServiceDate: new Date(2025, 3, 25),
-      Occupancy: "TENANT",
+      RequestedInstallDate: new Date(2025, 3, 25),
+      Occupancy: PropertyOccupancy.TENANT,
       CustomerID: lynell_johnson.CustomerID
     }
   });
