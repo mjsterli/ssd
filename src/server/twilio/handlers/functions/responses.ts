@@ -4,9 +4,12 @@ import { parseFullName } from 'parse-full-name';
 import { parser as addressParser } from 'parse-address';
 
 export async function initializeCustomer({session, body: { From: from }}){
+  let services = await getServices();
   let customer = await getCustomerByPhoneNumberWithOrders(from);
+  
+  session.loadedServices = services;
   session.customer = customer ?? {};
-  session.customer.PhonerNumber = from;
+  session.customer.PhoneNumber = from;
   if(!customer){
     session.ssdState = 'newCustomer';
     session.ssdProcess = 'init';
@@ -19,6 +22,11 @@ export async function initializeCustomer({session, body: { From: from }}){
     session.ssdState = 'install';
     session.ssdProcess = 'newOrder';
   }
+};
+
+async function getServices(){
+  const services = await prisma.requestService.findMany();
+  return services;
 };
 
 const getCustomerByPhoneNumberWithOrders = async (phoneNumber) => {
@@ -84,17 +92,17 @@ export async function setPropertyAddress(req){
 
 export async function setCounty(req){
   const county = matchedData(req).Body;
-  req.session.customer.newOrder.County = county;
+  req.session.customer.newOrder.PropertyCounty = county;
 };
 
 export async function setService(req){
   const service = matchedData(req).Body;
-  req.session.customer.newOrder.RequestedService = service;
+  req.session.customer.newOrder.RequestedServiceID = +service;
 };
 
 export async function setServiceDate(req){
   const serviceDate = matchedData(req).Body;
-  req.session.customer.newOrder.RequestedServiceDate = serviceDate;
+  req.session.customer.newOrder.RequestedInstallDate = new Date(serviceDate);
 };
 
 export async function setOccupancy(req){
