@@ -29,6 +29,7 @@
     "morgan": "^1.10.0",
     "parse-address": "^1.1.2",
     "parse-full-name": "^1.2.6",
+    "prettier": "^3.5.2",
     "twilio": "^5.4.2"
   },
   "devDependencies": {
