@@ -1,9 +1,11 @@
 import { ssd as ssdController } from '../handlers/ssd';
 
-const smsTwilioResponse = async (req, res, next) => {
-  const {session: {ssdState, ssdProcess}}= req;
+const smsTwilioResponse = async (req, _, next) => {
+  const {
+    session: { ssdState, ssdProcess }
+  } = req;
 
-  if(!!ssdState && !!ssdProcess){
+  if (!!ssdState && !!ssdProcess) {
     await ssdController[ssdState][ssdProcess].response(req);
     next();
   }

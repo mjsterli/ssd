@@ -25,31 +25,41 @@ export const ssd = {
       response: responses.initializeCustomer,
       reply: replies.greetNewCustomer,
       next: {
-        process: 'name'
+        process: "name"
       }
     },
     name: {
-      validation: body('Body').notEmpty().trim().withMessage('Please reply with your full name.'),
-      response: responses.setName,
+      validation: body("Body")
+        .notEmpty()
+        .trim()
+        .withMessage(
+          "Please reply with:\n[Full Name]\n[Email Address]\n[Brokerage]"
+        ),
+      response: responses.setCustomer,
       reply: replies.getEmail,
       next: {
-        process: 'email'
+        process: "email"
       }
     },
-    email:{
-      validation: body('Body').notEmpty().isEmail().withMessage('Please enter a valid email address.'),
+    email: {
+      validation: body("Body")
+        .notEmpty()
+        .isEmail()
+        .withMessage("Please enter a valid email address."),
       response: responses.setEmail,
       reply: replies.getBrokerage,
       next: {
-        process: 'brokerage'
+        process: "brokerage"
       }
     },
     brokerage: {
-      validation: body('Body').notEmpty().withMessage('Please enter a valid brokerage.'),
+      validation: body("Body")
+        .notEmpty()
+        .withMessage("Please enter a valid brokerage."),
       response: responses.setBrokerage,
       next: {
-        state: 'install',
-        process: 'init'
+        state: "install",
+        process: "init"
       }
     }
   },
@@ -57,65 +67,81 @@ export const ssd = {
     init: {
       reply: replies.getPropertyAddress,
       next: {
-        process: 'address'
+        process: "address"
       }
     },
     newOrder: {
       reply: replies.greetWithNewOrder,
       next: {
-        process: 'address'
+        process: "address"
       }
     },
     address: {
-      validation: body('Body').notEmpty().withMessage('Please enter a valid US mailing address.'),
+      validation: body("Body")
+        .notEmpty()
+        .withMessage("Please enter a valid US mailing address."),
       response: responses.setPropertyAddress,
       reply: replies.getCounty,
       next: {
-        process: 'county'
+        process: "county"
       }
     },
     county: {
-      validation: body('Body').notEmpty().isAlpha().withMessage('Please enter a valid county name.'),
+      validation: body("Body")
+        .notEmpty()
+        .isAlpha()
+        .withMessage("Please enter a valid county name."),
       response: responses.setCounty,
       reply: replies.getService,
       next: {
-        process: 'service'
+        process: "service"
       }
     },
     service: {
-      validation: body('Body').notEmpty().isInt({gt: 0, lt: 5}).withMessage('Please enter a valid numeric service between 1 and 4.'),
+      validation: body("Body")
+        .notEmpty()
+        .isInt({ gt: 0, lt: 5 })
+        .withMessage("Please enter a valid numeric service between 1 and 4."),
       response: responses.setService,
       reply: replies.getServiceDate,
       next: {
-        process: 'date'
+        process: "date"
       }
     },
     date: {
-      validation: body('Body').notEmpty().isDate().withMessage('Please enter a valid service date in the form of "MM/DD/YYYY".'),
+      validation: body("Body")
+        .notEmpty()
+        .isDate()
+        .withMessage(
+          'Please enter a valid service date in the form of "MM/DD/YYYY".'
+        ),
       response: responses.setServiceDate,
       reply: replies.getOccupancy,
       next: {
-        process: 'occupancy'
+        process: "occupancy"
       }
     },
     occupancy: {
-      validation: body('Body').notEmpty().isInt({gt: 0, lt: 4}).withMessage('Please enter a valid numeric occupancy between 1 and 3.'),
+      validation: body("Body")
+        .notEmpty()
+        .isInt({ gt: 0, lt: 4 })
+        .withMessage("Please enter a valid numeric occupancy between 1 and 3."),
       response: responses.setOccupancy,
       reply: replies.getInstallConfirmation,
       next: {
-        state: 'confirm',
-        process: 'install'
+        state: "confirm",
+        process: "install"
       }
     }
   },
   confirm: {
     install: {
-      validation: body('Body').notEmpty().isAlpha().isIn(['c', 'C', 'n', 'N']),
+      validation: body("Body").notEmpty().isAlpha().isIn(["c", "C", "n", "N"]),
       response: responses.setInstallConfirmation,
       reply: replies.endConversation
     },
     remove: {
-      validation: body('Body').notEmpty().isAlpha().isIn(['c', 'C', 'n', 'N']),
+      validation: body("Body").notEmpty().isAlpha().isIn(["c", "C", "n", "N"]),
       response: responses.setRemovalConfirmation,
       reply: replies.endConversation
     }
@@ -124,28 +150,57 @@ export const ssd = {
     init: {
       reply: replies.getOrderSelection,
       next: {
-        process: 'select'
+        process: "select"
       }
     },
     select: {
-      validation: body('Body').notEmpty().isInt().withMessage('Please enter a valid numeric selection.'),
-      response: responses.setOrderSelection,
+      validation: body("Body")
+        .notEmpty()
+        .isInt()
+        .withMessage("Please enter a valid numeric selection."),
+      response: responses.setOrderSelection
     }
   },
   remove: {
     init: {
       reply: replies.getRemovalDate,
       next: {
-        process: 'date'
+        process: "date"
       }
     },
     date: {
-      validation: body('Body').notEmpty().isDate().withMessage('Please enter a valid removal date in the form of "MM/DD/YYYY".'),
+      validation: body("Body")
+        .notEmpty()
+        .isDate()
+        .withMessage(
+          'Please enter a valid removal date in the form of "MM/DD/YYYY".'
+        )
+        .custom((value, { req }) => {
+          let installDate = new Date(req.session.RequestedInstallDate),
+            removalDate = new Date(value);
+
+          return removalDate > installDate;
+        })
+        .withMessage(
+          (
+            value,
+            {
+              req: {
+                session: {
+                  customer: { Orders }
+                }
+              }
+            }
+          ) => {
+            let orderToRemove = Orders.find((order) => order.Remove);
+            return `Please enter a removal date after the install date: ${orderToRemove.RequestedInstallDate}`;
+          }
+        ),
       response: responses.setRemovalDate,
       reply: replies.getRemovalConfirmation,
       next: {
-        state: 'confirm',
-        process: 'remove'
+        state: "confirm",
+        process: "remove"
       }
     }
   }

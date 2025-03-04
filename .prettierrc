@@ -3,5 +3,9 @@
   "[css]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "singleQuote": true
+  "singleQuote": false,
+  "quoteProps": "consistent",
+  "trailingComma": "none",
+  "bracketSameLine": true,
+  "tabWidth": 2
 }

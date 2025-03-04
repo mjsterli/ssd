@@ -46,6 +46,7 @@ const getCustomerByPhoneNumberWithOrders = async (phoneNumber) => {
           OrderID: true,
           PropertyAddress: true,
           PropertyCounty: true,
+          RequestedInstallDate: true,
           RequestedService: {
             select: {
               Description: true
@@ -60,8 +61,14 @@ const getCustomerByPhoneNumberWithOrders = async (phoneNumber) => {
   return customer;
 };
 
-export async function setName({session, body: {Body: smsName}}){
-  const name = parseFullName(smsName);
+export async function setCustomer({ session, body: { Body: smsResponse } }) {
+  const responseLines = smsResponse.split("\n");
+
+  if (responseLines.length === 1) {
+    name = parseFullName(smsResponse);
+  } else {
+    var { name, email, brokerage } = parseGreetingResponse(responseLines);
+  }
 
   session.customer.Title = name?.title;
   session.customer.FirstName = name.first;
@@ -70,38 +77,54 @@ export async function setName({session, body: {Body: smsName}}){
   session.customer.Suffix = name?.suffix;
 
   session.customer.Name = !!name?.title
-                            ? `${name.title} ${name.last}`
-                            : `${name.first}`;
-};
+    ? `${name.title} ${name.last}`
+    : `${name.first}`;
 
-export async function setEmail({session, body: {Body: smsEmail}}){
+  if (email) session.customer.EmailAddress = email;
+  if (brokerage) session.customer.Brokerage = brokerage;
+
+  session.ssdState = "install";
+  session.ssdProcess = "init";
+}
+
+function parseGreetingResponse(greetingResponses) {
+  let name = parseFullName(greetingResponses[0]),
+    email = greetingResponses[1] ? greetingResponses[1] : null,
+    brokerage = greetingResponses[2] ? greetingResponses[2] : null;
+
+  return { name, email, brokerage };
+}
+
+export async function setEmail({ session, body: { Body: smsEmail } }) {
   session.customer.EmailAddress = smsEmail;
-};
+}
 
-export async function setBrokerage({session, body: {Body: smsBrokerage}}){
+export async function setBrokerage({ session, body: { Body: smsBrokerage } }) {
   session.customer.Brokerage = smsBrokerage;
-  session.ssdState =    'install';
-  session.ssdProcess =  'init';
-};
+  session.ssdState = "install";
+  session.ssdProcess = "init";
+}
 
-export async function setPropertyAddress(req){
+export async function setPropertyAddress(req) {
   const propertyAddress = matchedData(req).Body;
-  const {session: {customer}} = req;
+  const {
+    session: { customer }
+  } = req;
   customer.newOrder = {};
   customer.newOrder.PropertyAddress = propertyAddress;
 
   //todo -- Parse out address to save
   // const parsedPropertyAddress = addressParser.parseLocation(propertyAddress);
-};
+}
 
-export async function setCounty(req){
+export async function setCounty(req) {
   const county = matchedData(req).Body;
   req.session.customer.newOrder.PropertyCounty = county;
-};
+}
 
-export async function setService(req){
+export async function setService(req) {
   const service = matchedData(req).Body;
-  req.session.customer.newOrder.RequestServiceID = +service;
+  req.session.customer.newOrder.RequestedServiceID = +service;
 };
 
 export async function setServiceDate(req){
