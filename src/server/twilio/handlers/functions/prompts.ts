@@ -1,15 +1,15 @@
-import { PropertyOccupancy, Prisma as prismaNamespace } from '@prisma/client';
-import prisma from '../../../db';
+import { PropertyOccupancy, Prisma as prismaNamespace } from "@prisma/client";
+import prisma from "../../../db";
 
 export async function greetNewCustomer() {
   let message =
     "Welcome to Simple Sign Delivery automated ordering system for sign pick-up and delivery.\n";
   message +=
     "To start your order, please reply with the following information:\n";
-  message += "[Full Name]\n[Email Address]\n[Brokerage]";
+  message += "[Full Name]\n[Email Address]";
 
   return message;
-}
+};
 
 export async function greetWithNewOrder({ session: { customer } }) {
   let message = `Welcome back ${customer.FirstName} to Simple Sign Delivery automated ordering system for sign pick-up and delivery.\n`;
@@ -17,26 +17,26 @@ export async function greetWithNewOrder({ session: { customer } }) {
     "What is the property address that you would like to have you sign delivered to?\n";
 
   return message;
-}
+};
 
 export async function getEmail({ session }) {
   let message = `Hi ${session.customer.Name}\n`;
   message += "Please reply with your Email Address.\n";
 
   return message;
-}
+};
 
 export async function getBrokerage() {
   return "What Real Estate Brokerage are you associated with?";
-}
+};
 
 export async function getPropertyAddress() {
   return "What is the property address that you would like to have you sign delivered to?\n";
-}
+};
 
 export async function getCounty() {
   return "Which county is the property located?";
-}
+};
 
 export async function getService({ session }) {
   let message =
@@ -48,15 +48,15 @@ export async function getService({ session }) {
   );
 
   return message;
-}
+};
 
 export async function getServiceDate() {
   return "What date would you like your service request to be fullfilled?\n";
-}
+};
 
 export async function getRemovalDate() {
   return "What date would you like your sign removed?\n";
-}
+};
 
 export async function getOccupancy() {
   let message =
@@ -66,7 +66,7 @@ export async function getOccupancy() {
   message += "3) Tenant Occupied\n";
 
   return message;
-}
+};
 
 export async function getInstallConfirmation({
   session: {
@@ -83,13 +83,13 @@ export async function getInstallConfirmation({
   message += "(C) to Confirm or (N) to Cancel";
 
   return message;
-}
+};
 
 export async function endConversation({ session }) {
   await saveCustomerOrder(session);
   session.destroy();
   return "Your order has been placed.\nThank you for using the Simple Sign Delivery Automated Service.";
-}
+};
 
 const occupancies = [
   { dbName: PropertyOccupancy.VACANT, description: "Vacant" },
@@ -112,7 +112,7 @@ export async function getOrderSelection({ session: { customer } }) {
   );
 
   return message;
-}
+};
 
 export async function getRemovalConfirmation({ session }) {
   let order = session.customer.Orders.find((order) => order.Remove);
@@ -125,11 +125,10 @@ export async function getRemovalConfirmation({ session }) {
   message += "(C) to Confirm or (N) to Cancel";
 
   return message;
-}
+};
 
 async function saveCustomerOrder(session) {
-  let { customer } = session,
-    savedCustomer;
+  let { customer } = session;
 
   if (!customer.CustomerID) {
     await saveCustomerAndOrder(customer);
@@ -141,7 +140,7 @@ async function saveCustomerOrder(session) {
   } else {
     await removeOrder(customer.Orders.find((order) => order.Remove));
   }
-}
+};
 
 async function saveCustomerAndOrder(customer) {
   let {
@@ -183,7 +182,7 @@ async function saveCustomerAndOrder(customer) {
       }
     }
   });
-}
+};
 
 const saveOrder = async ({
   newOrder: {
@@ -208,7 +207,9 @@ const saveOrder = async ({
 };
 
 const removeOrder = async (order) => {
-  let orderWhere: prismaNamespace.OrderWhereUniqueInput = { OrderID: order.OrderID };
+  let orderWhere: prismaNamespace.OrderWhereUniqueInput = {
+    OrderID: order.OrderID
+  };
 
   await prisma.order.update({
     where: orderWhere,

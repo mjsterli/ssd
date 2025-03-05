@@ -1,29 +1,46 @@
-import { body, matchedData } from 'express-validator';
-import * as responses from './functions/responses';
-import * as replies from './functions/replies';
-import { parseFullName } from 'parse-full-name';
+import { body, matchedData } from "express-validator";
+import * as actions from "./functions/actions";
+import * as prompts from "./functions/prompts";
+import { parseFullName } from "parse-full-name";
 
-const formatCustomerName = (req) => {
-  const {Body} = matchedData(req);
-  const {session: {customer}} = req;
-  const parsedFullName = parseFullName(Body);
+const isValidDate = (dateToCheck) => {
+  const date = new Date(dateToCheck);
+  return !isNaN(date.getTime());
+};
 
-  customer.Name.displayName = parsedFullName.title && parsedFullName.last
-                              ? `${parsedFullName.title} ${parsedFullName.last}`
-                              : `${parsedFullName.first}`;
-  
-  customer.Name.title   = parsedFullName.title;
-  customer.Name.first   = parsedFullName.first;
-  customer.Name.middle  = parsedFullName.middle;
-  customer.Name.last    = parsedFullName.last;
-  customer.Name.suffix  = parsedFullName.suffix;
+const isAFutureDate = (date) => {
+  const futureDate = new Date(date),
+    currentDate = new Date();
+
+  return futureDate > currentDate;
+};
+
+const isRemovalAfterInstall = (removalValue, { req }) => {
+  const installDate = new Date(req.session.RequestedInstallDate),
+    removalDate = new Date(removalValue);
+
+  return removalDate > installDate;
+};
+
+const formatRemovalDateAfterInstallDateMessage = (
+  value,
+  {
+    req: {
+      session: {
+        customer: { Orders }
+      }
+    }
+  }
+) => {
+  const orderToRemove = Orders.find((order) => order.Remove);
+  return `Please enter a removal date after the install date: ${orderToRemove.RequestedInstallDate}`;
 };
 
 export const ssd = {
   newCustomer: {
     init: {
-      response: responses.initializeCustomer,
-      reply: replies.greetNewCustomer,
+      prompt: prompts.greetNewCustomer,
+      action: actions.initializeCustomer,
       next: {
         process: "name"
       }
@@ -35,10 +52,10 @@ export const ssd = {
         .withMessage(
           "Please reply with:\n[Full Name]\n[Email Address]\n[Brokerage]"
         ),
-      response: responses.setCustomer,
-      reply: replies.getEmail,
+      prompt: prompts.getBrokerage,
+      action: actions.setCustomer,
       next: {
-        process: "email"
+        process: "brokerage"
       }
     },
     email: {
@@ -46,8 +63,8 @@ export const ssd = {
         .notEmpty()
         .isEmail()
         .withMessage("Please enter a valid email address."),
-      response: responses.setEmail,
-      reply: replies.getBrokerage,
+      prompt: prompts.getBrokerage,
+      action: actions.setEmail,
       next: {
         process: "brokerage"
       }
@@ -56,7 +73,7 @@ export const ssd = {
       validation: body("Body")
         .notEmpty()
         .withMessage("Please enter a valid brokerage."),
-      response: responses.setBrokerage,
+      action: actions.setBrokerage,
       next: {
         state: "install",
         process: "init"
@@ -65,13 +82,13 @@ export const ssd = {
   },
   install: {
     init: {
-      reply: replies.getPropertyAddress,
+      prompt: prompts.getPropertyAddress,
       next: {
         process: "address"
       }
     },
     newOrder: {
-      reply: replies.greetWithNewOrder,
+      prompt: prompts.greetWithNewOrder,
       next: {
         process: "address"
       }
@@ -80,8 +97,8 @@ export const ssd = {
       validation: body("Body")
         .notEmpty()
         .withMessage("Please enter a valid US mailing address."),
-      response: responses.setPropertyAddress,
-      reply: replies.getCounty,
+      prompt: prompts.getCounty,
+      action: actions.setPropertyAddress,
       next: {
         process: "county"
       }
@@ -91,8 +108,8 @@ export const ssd = {
         .notEmpty()
         .isAlpha()
         .withMessage("Please enter a valid county name."),
-      response: responses.setCounty,
-      reply: replies.getService,
+      prompt: prompts.getService,
+      action: actions.setCounty,
       next: {
         process: "service"
       }
@@ -102,8 +119,8 @@ export const ssd = {
         .notEmpty()
         .isInt({ gt: 0, lt: 5 })
         .withMessage("Please enter a valid numeric service between 1 and 4."),
-      response: responses.setService,
-      reply: replies.getServiceDate,
+      prompt: prompts.getServiceDate,
+      action: actions.setService,
       next: {
         process: "date"
       }
@@ -111,12 +128,14 @@ export const ssd = {
     date: {
       validation: body("Body")
         .notEmpty()
-        .isDate()
+        .custom(isValidDate)
         .withMessage(
           'Please enter a valid service date in the form of "MM/DD/YYYY".'
-        ),
-      response: responses.setServiceDate,
-      reply: replies.getOccupancy,
+        )
+        .custom(isAFutureDate)
+        .withMessage("Please enter a future service date."),
+      prompt: prompts.getOccupancy,
+      action: actions.setServiceDate,
       next: {
         process: "occupancy"
       }
@@ -126,8 +145,8 @@ export const ssd = {
         .notEmpty()
         .isInt({ gt: 0, lt: 4 })
         .withMessage("Please enter a valid numeric occupancy between 1 and 3."),
-      response: responses.setOccupancy,
-      reply: replies.getInstallConfirmation,
+      prompt: prompts.getInstallConfirmation,
+      action: actions.setOccupancy,
       next: {
         state: "confirm",
         process: "install"
@@ -137,18 +156,18 @@ export const ssd = {
   confirm: {
     install: {
       validation: body("Body").notEmpty().isAlpha().isIn(["c", "C", "n", "N"]),
-      response: responses.setInstallConfirmation,
-      reply: replies.endConversation
+      prompt: prompts.endConversation,
+      action: actions.setInstallConfirmation
     },
     remove: {
       validation: body("Body").notEmpty().isAlpha().isIn(["c", "C", "n", "N"]),
-      response: responses.setRemovalConfirmation,
-      reply: replies.endConversation
+      prompt: prompts.endConversation,
+      action: actions.setRemovalConfirmation
     }
   },
   display: {
     init: {
-      reply: replies.getOrderSelection,
+      prompt: prompts.getOrderSelection,
       next: {
         process: "select"
       }
@@ -158,12 +177,12 @@ export const ssd = {
         .notEmpty()
         .isInt()
         .withMessage("Please enter a valid numeric selection."),
-      response: responses.setOrderSelection
+      action: actions.setOrderSelection
     }
   },
   remove: {
     init: {
-      reply: replies.getRemovalDate,
+      prompt: prompts.getRemovalDate,
       next: {
         process: "date"
       }
@@ -171,33 +190,14 @@ export const ssd = {
     date: {
       validation: body("Body")
         .notEmpty()
-        .isDate()
+        .custom(isValidDate)
         .withMessage(
           'Please enter a valid removal date in the form of "MM/DD/YYYY".'
         )
-        .custom((value, { req }) => {
-          let installDate = new Date(req.session.RequestedInstallDate),
-            removalDate = new Date(value);
-
-          return removalDate > installDate;
-        })
-        .withMessage(
-          (
-            value,
-            {
-              req: {
-                session: {
-                  customer: { Orders }
-                }
-              }
-            }
-          ) => {
-            let orderToRemove = Orders.find((order) => order.Remove);
-            return `Please enter a removal date after the install date: ${orderToRemove.RequestedInstallDate}`;
-          }
-        ),
-      response: responses.setRemovalDate,
-      reply: replies.getRemovalConfirmation,
+        .custom(isRemovalAfterInstall)
+        .withMessage(formatRemovalDateAfterInstallDateMessage),
+      prompt: prompts.getRemovalConfirmation,
+      action: actions.setRemovalDate,
       next: {
         state: "confirm",
         process: "remove"

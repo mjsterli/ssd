@@ -1,9 +1,9 @@
-import prisma from '../../db';
+import prisma from "../../db";
 
 export const getOrders = async (req, res) => {
   const orders = await prisma.order.findMany();
 
-  res.json({ orders: orders});
+  res.json({ orders: orders });
 };
 
 export const getOrder = async (req, res) => {
@@ -47,5 +47,5 @@ export const getOrder = async (req, res) => {
     }
   });
 
-  res.json({order: order});
+  res.json({ order: order });
 };

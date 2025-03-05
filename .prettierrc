@@ -7,5 +7,6 @@
   "quoteProps": "consistent",
   "trailingComma": "none",
   "bracketSameLine": true,
+  "bracketSpacing": true,
   "tabWidth": 2
 }

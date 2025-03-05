@@ -1,4 +1,4 @@
-import prisma from '../../db';
+import prisma from "../../db";
 
 export const getCustomerByPhoneNumber = async (req, res) => {
   const phoneNumber = req.params.phonenumber;
@@ -10,4 +10,4 @@ export const getCustomerByPhoneNumber = async (req, res) => {
   });
 
   res.json({ data: customer ?? {} });
-}
+};
