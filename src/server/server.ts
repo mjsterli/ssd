@@ -18,6 +18,4 @@ const validateInput = (req, res, next)  => {
 app.use('/api', apiRouter);
 app.use('/twilio', validateInput, twilioRouter);
 
-
-
-export default app
+export default app;

@@ -1,6 +1,7 @@
-import { twiml } from 'twilio';
-import { ssd as ssdController } from './ssd';
+import pkg from "twilio";
+import { ssd as ssdController } from "./ssd";
 
+const { twiml } = pkg;
 
 export const smsTwilioReply = async (req, res) => {
   let { session } = req;
@@ -8,14 +9,12 @@ export const smsTwilioReply = async (req, res) => {
   let { reply, next } = ssdController[session.ssdState][session.ssdProcess];
 
   smsResponse.message(await reply(req));
-  if(!!next) setNextStateProcess(session, next);
+  if (!!next) setNextStateProcess(session, next);
 
-  res
-    .type('text/xml')
-    .send(smsResponse.toString());
+  res.type("text/xml").send(smsResponse.toString());
 };
 
 const setNextStateProcess = (session, { state, process }) => {
-  session.ssdState    = state ?? session.ssdState;
-  session.ssdProcess  = process;
+  session.ssdState = state ?? session.ssdState;
+  session.ssdProcess = process;
 };
