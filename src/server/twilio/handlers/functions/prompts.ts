@@ -86,9 +86,20 @@ export async function getInstallConfirmation({
 };
 
 export async function endConversation({ session }) {
-  await saveCustomerOrder(session);
-  session.destroy();
-  return "Your order has been placed.\nThank you for using the Simple Sign Delivery Automated Service.";
+  if (isConfirmed(session)) {
+    await saveCustomerOrder(session);
+    session.destroy();
+    return "Your order has been placed.\nThank you for using the Simple Sign Delivery Automated Service.";
+  } else {
+    session.destroy();
+    return "Your order has been canceled.\nThank you for using the Simple Sign Delivery Automated Service.";
+  }
+}
+
+const isConfirmed = ({ customer }) => {
+  return !!customer.newOrder
+    ? customer.newOrder.isConfirmed
+    : !!customer.Orders.find((order) => order.Remove && order.isConfirmed);
 };
 
 const occupancies = [
