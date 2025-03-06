@@ -16,14 +16,17 @@ const isAFutureDate = (date) => {
 };
 
 const isRemovalAfterInstall = (removalValue, { req }) => {
-  const installDate = new Date(req.session.RequestedInstallDate),
+  const orderToRemove = req.session.customer.Orders.find(
+    (order) => order.Remove
+  );
+  const installDate = new Date(orderToRemove.RequestedInstallDate),
     removalDate = new Date(removalValue);
 
   return removalDate > installDate;
 };
 
 const formatRemovalDateAfterInstallDateMessage = (
-  value,
+  _,
   {
     req: {
       session: {
@@ -33,7 +36,16 @@ const formatRemovalDateAfterInstallDateMessage = (
   }
 ) => {
   const orderToRemove = Orders.find((order) => order.Remove);
-  return `Please enter a removal date after the install date: ${orderToRemove.RequestedInstallDate}`;
+  return `Please enter a removal date after the install date: ${formatDate(orderToRemove.RequestedInstallDate)}`;
+};
+
+const formatDate = (dateToFormat) => {
+  const date = new Date(dateToFormat);
+  const day = `${date.getDay() + 1}`.padStart(2, "0");
+  const month = `${+date.getMonth() + 1}`.padStart(2, "0");
+  const year = date.getFullYear();
+
+  return `${month}-${day}-${year}`;
 };
 
 export const ssd = {
