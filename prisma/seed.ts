@@ -64,44 +64,36 @@ async function main() {
   /***  Employee  ***/
 
   /***  Customers ***/
-  const lindsay = await prisma.customer.upsert({
-    where: {
-      EmailAddress: "lindsay.gilbert@gmail.com"
-    },
-    update: {},
-    create: {
+  const lindsay = await prisma.customer.create({
+    data: {
       FirstName: "Lindsay",
       LastName: "Gilbert",
-      PhoneNumber: "5081994316",
+      PhoneNumber: "+15081994316",
       EmailAddress: "lindsay.gilbert@gmail.com",
       Brokerage: "Keller Williams"
     }
   });
-  const camilla = await prisma.customer.upsert({
-    where: {
-      EmailAddress: "camilla.mercy@hotmail.com"
-    },
-    update: {},
-    create: {
+  const camilla = await prisma.customer.create({
+    data: {
       FirstName: "Camilla",
       LastName: "Mercy",
-      PhoneNumber: "4017591138",
+      PhoneNumber: "+14017591138",
       EmailAddress: "camilla.mercy@hotmail.com",
       Brokerage: "Keller Williams"
     }
   });
   const sullivan = await prisma.customer.create({
     data: {
-      FirstName: "ullivan",
+      FirstName: "Sullivan",
       LastName: "Goldie",
-      PhoneNumber: "2144941167",
+      PhoneNumber: "+12144941167",
       EmailAddress: "sullivan.goldie@aol.com",
       Brokerage: "Century 21",
       Orders: {
         create: [
           {
             PropertyAddress: "4671 Copper Ln. Fort Worth, TX. 75045",
-            PropertyCounty: "Tarrant",
+            PropertyCounty: "Tarrant County",
             RequestedServiceID: comboBox.RequestServiceID,
             RequestedInstallDate: new Date(2020, 10, 15),
             Occupancy: PropertyOccupancy.VACANT
@@ -114,14 +106,14 @@ async function main() {
     data: {
       FirstName: "Zachery",
       LastName: "Caelan",
-      PhoneNumber: "5099671900",
+      PhoneNumber: "+15099671900",
       EmailAddress: "zachery.caelan@msn.com",
       Brokerage: "Century 21",
       Orders: {
         create: [
           {
             PropertyAddress: "3474 Vista St. Rowlett, TX. 75032",
-            PropertyCounty: "Rowlett",
+            PropertyCounty: "Rowlett County",
             RequestedServiceID: realEstateSign.RequestServiceID,
             RequestedInstallDate: new Date(2023, 7, 28),
             Occupancy: PropertyOccupancy.VACANT
@@ -134,14 +126,14 @@ async function main() {
     data: {
       FirstName: "Shawnee",
       LastName: "Jordan",
-      PhoneNumber: "4527896352",
+      PhoneNumber: "+14527896352",
       EmailAddress: "shawnee.jordan@gmail.com",
       Brokerage: "Jones Realty",
       Orders: {
         create: [
           {
             PropertyAddress: "98396 Fortune Ave. Denton, TX. 75041",
-            PropertyCounty: "Denton",
+            PropertyCounty: "Denton County",
             RequestedServiceID: openHouseSignPlacement.RequestServiceID,
             RequestedInstallDate: new Date(2025, 3, 25),
             Occupancy: PropertyOccupancy.TENANT
@@ -154,28 +146,28 @@ async function main() {
     data: {
       FirstName: "Latrelle",
       LastName: "Stokes",
-      PhoneNumber: "7546329514",
+      PhoneNumber: "+17546329514",
       EmailAddress: "latrelle.stokes@hotmail.com",
       Brokerage: "Keller Williams",
       Orders: {
         create: [
           {
             PropertyAddress: "5642 Bay Lane. Frisco, TX. 75024",
-            PropertyCounty: "Collin",
+            PropertyCounty: "Collin County",
             RequestedServiceID: comboBox.RequestServiceID,
             RequestedInstallDate: new Date(2022, 11, 4, 3, 4, 0),
             Occupancy: PropertyOccupancy.VACANT
           },
           {
             PropertyAddress: "5642 Bay Lane. Frisco, TX. 75024",
-            PropertyCounty: "Collin",
+            PropertyCounty: "Collin County",
             RequestedServiceID: comboBox.RequestServiceID,
             RequestedInstallDate: new Date(2022, 11, 4, 3, 4, 0),
             Occupancy: PropertyOccupancy.VACANT
           },
           {
             PropertyAddress: "5372 Old Lane. Irving, TX. 75085",
-            PropertyCounty: "Dallas",
+            PropertyCounty: "Dallas County",
             RequestedServiceID: openHouseSignPlacement.RequestServiceID,
             RequestedInstallDate: new Date(2021, 4, 25),
             Occupancy: PropertyOccupancy.OWNER
@@ -197,7 +189,7 @@ async function main() {
         create: [
           {
             PropertyAddress: "4739 Bradford St. Plano, TX. 75024",
-            PropertyCounty: "Collin",
+            PropertyCounty: "Collin County",
             RequestedServiceID: supraIBox.RequestServiceID,
             RequestedInstallDate: new Date(2023, 10, 23, 15, 34, 0),
             Occupancy: PropertyOccupancy.OWNER,
@@ -210,28 +202,28 @@ async function main() {
           },
           {
             PropertyAddress: "29188 Amberly Ct. Little Elm, TX. 75068",
-            PropertyCounty: "Denton",
+            PropertyCounty: "Denton County",
             RequestedServiceID: supraIBox.RequestServiceID,
             RequestedInstallDate: new Date(2024, 2, 28, 8, 57, 0),
             Occupancy: PropertyOccupancy.TENANT
           },
           {
             PropertyAddress: "1221 Napier Dr. Plano, TX. 75024",
-            PropertyCounty: "Collin",
+            PropertyCounty: "Collin County",
             RequestedServiceID: openHouseSignPlacement.RequestServiceID,
             RequestedInstallDate: new Date(2024, 8, 12, 12, 33, 0),
             Occupancy: PropertyOccupancy.OWNER
           },
           {
             PropertyAddress: "11819 Sycamore Dr. Mckinney, TX. 75071",
-            PropertyCounty: "Collin",
+            PropertyCounty: "Collin County",
             RequestedServiceID: realEstateSign.RequestServiceID,
             RequestedInstallDate: new Date(2025, 1, 5, 22, 22, 0),
             Occupancy: PropertyOccupancy.VACANT
           },
           {
             PropertyAddress: "38492 Knight Ave. Dallas, TX. 75022",
-            PropertyCounty: "Dallas",
+            PropertyCounty: "Dallas County",
             RequestedServiceID: realEstateSign.RequestServiceID,
             RequestedInstallDate: new Date(2025, 1, 15, 1, 2, 0),
             Occupancy: PropertyOccupancy.OWNER,
@@ -244,7 +236,7 @@ async function main() {
           },
           {
             PropertyAddress: "97857 Amber Ave. Dallas, TX. 75022",
-            PropertyCounty: "Dallas",
+            PropertyCounty: "Dallas County",
             RequestedServiceID: supraIBox.RequestServiceID,
             RequestedInstallDate: new Date(2025, 1, 5, 22, 22, 0),
             Occupancy: PropertyOccupancy.VACANT
