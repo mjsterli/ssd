@@ -5,7 +5,8 @@ const { twiml } = pkg;
 
 const validateInput = async (req, res, next) => {
   const {
-    session: { ssdState, ssdProcess }
+    session: { ssdState, ssdProcess },
+    body: { Body: textSent }
   } = req;
 
   if (!!ssdState && !!ssdProcess) {
@@ -21,9 +22,14 @@ const validateInput = async (req, res, next) => {
       next();
     }
   } else {
-    req.session.ssdState = "newCustomer";
-    req.session.ssdProcess = "init";
-    next();
+    if (textSent.toLowerCase() == "ssd") {
+      req.session.ssdState = "newCustomer";
+      req.session.ssdProcess = "init";
+      next();
+    } else {
+      res.type("type/xml").send("");
+      req.session.destroy();
+    }
   }
 };
 
