@@ -109,10 +109,10 @@ export const ssd = {
       validation: body("Body")
         .notEmpty()
         .withMessage("Please enter a valid US mailing address."),
-      prompt: prompts.getCounty,
+      prompt: prompts.getService,
       action: actions.setPropertyAddress,
       next: {
-        process: "county"
+        process: "service"
       }
     },
     county: {
