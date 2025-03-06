@@ -155,7 +155,11 @@ export const ssd = {
   },
   confirm: {
     install: {
-      validation: body("Body").notEmpty().isAlpha().isIn(["c", "C", "n", "N"]),
+      validation: body("Body")
+        .notEmpty()
+        .isAlpha()
+        .isIn(["c", "C", "n", "N"])
+        .withMessage("Please enter 'C' to confirm or 'N' to cancel."),
       prompt: prompts.endConversation,
       action: actions.setInstallConfirmation
     },
