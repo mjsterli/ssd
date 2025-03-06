@@ -108,7 +108,7 @@ const occupancies = [
   { dbName: PropertyOccupancy.TENANT, description: "Tenant Occupied" }
 ];
 
-export async function getOrderSelection({ session: { customer } }) {
+export const getOrderSelection = ({ session: { customer } }) => {
   let message = `Welcome back ${customer.FirstName} to Simple Sign Delivery automated ordering system for sign pick-up and delivery.\n`;
   message += `You currently have ${customer.Orders.length} installed orders.\n`;
   message +=
@@ -136,7 +136,7 @@ export async function getRemovalConfirmation({ session }) {
   message += "(C) to Confirm or (N) to Cancel";
 
   return message;
-};
+}
 
 async function saveCustomerOrder(session) {
   let { customer } = session;
@@ -151,7 +151,7 @@ async function saveCustomerOrder(session) {
   } else {
     await removeOrder(customer.Orders.find((order) => order.Remove));
   }
-};
+}
 
 async function saveCustomerAndOrder(customer) {
   let {
