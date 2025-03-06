@@ -33,8 +33,8 @@ model Customer {
   LastName     String
   Suffix       String?
   PhoneNumber  String  @unique
-  EmailAddress String  @unique
-  Brokerage    String
+  EmailAddress String?
+  Brokerage    String?
   Orders       Order[]
 }
 
@@ -43,7 +43,7 @@ model Order {
   OrderID              String            @id @default(uuid())
   CreatedAt            DateTime          @default(now())
   PropertyAddress      String
-  PropertyCounty       String
+  PropertyCounty       String?
   RequestedService     RequestService    @relation(fields: [RequestedServiceID], references: [RequestServiceID])
   RequestedServiceID   Int
   RequestedInstallDate DateTime
