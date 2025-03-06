@@ -1,6 +1,7 @@
 import prisma from "../../../db";
 import { matchedData } from "express-validator";
 import { parseFullName } from "parse-full-name";
+import axios from "axios";
 import { parser as addressParser } from "parse-address";
 
 const getServices = async () => {
@@ -90,7 +91,6 @@ export async function setCustomer({ session, body: { Body: smsResponse } }) {
     : `${name.first}`;
 
   if (email) session.customer.EmailAddress = email;
-  if (brokerage) session.customer.Brokerage = brokerage;
 }
 
 export async function setEmail({ session, body: { Body: smsEmail } }) {
@@ -110,6 +110,16 @@ export async function setPropertyAddress(req) {
   } = req;
   customer.newOrder = {};
   customer.newOrder.PropertyAddress = propertyAddress;
+
+  const openCageDataUrl = `https://api.opencagedata.com/geocode/v1/json?key=${process.env.OPEN_CAGE_DATA_KEY}&q=${encodeURIComponent(propertyAddress)}&pretty=1`;
+  const response = await axios.get(openCageDataUrl);
+
+  //todo -- add error handling for an invalid address.
+
+  const result = response.data.results.find(
+    (result) => result?.components?.county
+  );
+  customer.newOrder.PropertyCounty = result.components.county;
 
   //todo -- Parse out address to save
   // const parsedPropertyAddress = addressParser.parseLocation(propertyAddress);
