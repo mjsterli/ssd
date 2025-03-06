@@ -172,7 +172,7 @@ async function saveCustomerAndOrder(customer) {
     }
   } = customer;
 
-  const savedCustomer = await prisma.customer.create({
+  await prisma.customer.create({
     data: {
       Title: Title,
       FirstName: FirstName,
