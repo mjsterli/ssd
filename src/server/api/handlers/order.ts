@@ -1,6 +1,6 @@
 import prisma from "../../db";
 
-export const getOrders = async (req, res) => {
+export const getOrders = async (_, res) => {
   const orders = await prisma.order.findMany();
 
   res.json({ orders: orders });
