@@ -2,7 +2,7 @@
   "compilerOptions": {
     "sourceMap": true,
     "outDir": "./dist",
-    "rootDir": "api/src",
+    "rootDir": "src",
     "strict": false,
     "lib": ["esnext"],
     "esModuleInterop": true,
@@ -10,7 +10,7 @@
     "module": "ES6",
     "moduleResolution": "node"
   },
-  "include": ["api/src/**/*.ts"],
+  "include": ["src/**/*.ts"],
   "tsc-alias": {
     "resolveFullPaths": true,
     "verbose": false
