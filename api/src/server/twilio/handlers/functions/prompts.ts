@@ -75,11 +75,11 @@ export async function getInstallConfirmation({
   }
 }) {
   let message = "Please confirm the order install:\n";
-  message += `Address:      ${order.PropertyAddress}\n`;
-  message += `County:       ${order.PropertyCounty}\n`;
-  message += `Service:      ${loadedServices.find((service) => service.RequestServiceID == order.RequestedServiceID).Description}\n`;
-  message += `Service Date: ${new Date(order.RequestedInstallDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}\n`;
-  message += `Occupancy:    ${occupancies[+order.Occupancy - 1].description}\n\n`;
+  message += `Address:        ${order.PropertyAddress}\n`;
+  message += `County:         ${order.PropertyCounty}\n`;
+  message += `Service:        ${loadedServices.find((service) => service.RequestServiceID == order.RequestedServiceID).Description}\n`;
+  message += `Service Date:   ${new Date(order.RequestedInstallDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}\n`;
+  message += `Occupancy:      ${occupancies[+order.Occupancy - 1].description}\n\n`;
   message += "(C) to Confirm or (N) to Cancel";
 
   return message;

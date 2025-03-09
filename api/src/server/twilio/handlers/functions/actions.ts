@@ -2,7 +2,9 @@ import prisma from "../../../db";
 import { matchedData } from "express-validator";
 import { parseFullName } from "parse-full-name";
 import axios from "axios";
-import { parser as addressParser } from "parse-address";
+import pkg from "parse-address";
+
+const { parser } = pkg;
 
 const getServices = async () => {
   const services = await prisma.requestService.findMany();
@@ -104,26 +106,42 @@ export async function setBrokerage({ session, body: { Body: smsBrokerage } }) {
 }
 
 export async function setPropertyAddress(req) {
+  let isValid = false,
+    response;
   const propertyAddress = matchedData(req).Body;
   const {
     session: { customer }
   } = req;
+
   customer.newOrder = {};
   customer.newOrder.PropertyAddress = propertyAddress;
 
-  const openCageDataUrl = `https://api.opencagedata.com/geocode/v1/json?key=${process.env.OPEN_CAGE_DATA_KEY}&q=${encodeURIComponent(propertyAddress)}&pretty=1`;
-  const response = await axios.get(openCageDataUrl);
+  try {
+    const openCageDataUrl = `https://api.opencagedata.com/geocode/v1/json?key=${process.env.OPEN_CAGE_DATA_KEY}&q=${encodeURIComponent(propertyAddress)}&pretty=1`;
+    response = await axios.get(openCageDataUrl);
+  } catch (e) {
+    req.session.ssdState = "install";
+    req.session.ssdProcess = "county";
+    return isValid;
+  }
 
-  //todo -- add error handling for an invalid address.
+  if (response.status != 200) return isValid;
 
   const result = response.data.results.find(
     (result) => result?.components?.county
   );
-  customer.newOrder.PropertyCounty = result.components.county;
 
-  //todo -- Parse out address to save
-  // const parsedPropertyAddress = addressParser.parseLocation(propertyAddress);
-}
+  if (!result) return isValid;
+
+  isValid = +result.confidence > 6;
+
+  if (isValid) {
+    customer.newOrder.PropertyCounty = result.components.county;
+  } else {
+    req.session.ssdState = "install";
+    req.session.ssdProcess = "county";
+  }
+};
 
 export async function setCounty(req) {
   const county = matchedData(req).Body;

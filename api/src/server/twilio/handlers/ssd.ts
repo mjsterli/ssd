@@ -2,7 +2,7 @@ import { body, matchedData } from "express-validator";
 import * as actions from "./functions/actions";
 import * as prompts from "./functions/prompts";
 import { parseFullName } from "parse-full-name";
-
+import { parseAddress } from "parse-address";
 const isValidDate = (dateToCheck) => {
   const date = new Date(dateToCheck);
   return !isNaN(date.getTime());
@@ -23,6 +23,24 @@ const isRemovalAfterInstall = (removalValue, { req }) => {
     removalDate = new Date(removalValue);
 
   return removalDate > installDate;
+};
+
+const validatePropertyAddress = (validations) => {
+  return async (req, res, next) => {
+    for (const validation of validations) {
+      const result = await validation.run(req);
+      if (!result.isEmpty()) {
+        return res.status(400).json({ errors: result.array });
+      }
+    }
+
+    next();
+  };
+};
+
+const isValidUSAddress = (propertyAddress) => {
+  let isValid = parseAddress(propertyAddress);
+  return !!isValid;
 };
 
 const formatRemovalDateAfterInstallDateMessage = (
@@ -108,7 +126,9 @@ export const ssd = {
     address: {
       validation: body("Body")
         .notEmpty()
-        .withMessage("Please enter a valid US mailing address."),
+        .withMessage("Please enter a property address.")
+        .custom(isValidUSAddress)
+        .withMessage("Please enter a valid US Mailing address."),
       prompt: prompts.getService,
       action: actions.setPropertyAddress,
       next: {
