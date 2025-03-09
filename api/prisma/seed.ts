@@ -122,17 +122,17 @@ async function main() {
       }
     }
   });
-  const robert = await prisma.customer.create({
+  const tonya = await prisma.customer.create({
     data: {
-      FirstName: "Shawnee",
-      LastName: "Jordan",
-      PhoneNumber: "+14527896352",
-      EmailAddress: "shawnee.jordan@gmail.com",
+      FirstName: "Tonya",
+      LastName: "Sterling",
+      PhoneNumber: "+12145000142",
+      EmailAddress: "tnantoine@gmail.com",
       Brokerage: "Jones Realty",
       Orders: {
         create: [
           {
-            PropertyAddress: "98396 Fortune Ave. Denton, TX. 75041",
+            PropertyAddress: "2649 Sherwood Dr., Lewisville TX. 75067",
             PropertyCounty: "Denton County",
             RequestedServiceID: openHouseSignPlacement.RequestServiceID,
             RequestedInstallDate: new Date(2025, 3, 25),
@@ -182,7 +182,7 @@ async function main() {
       FirstName: "Lynell",
       MiddleName: "Jones",
       LastName: "Johnson",
-      PhoneNumber: "+2145631193",
+      PhoneNumber: "+12145631193",
       EmailAddress: "yourrealtorfriendlj@gmail.com",
       Brokerage: "Lynell Jones Johnson Realtors",
       Orders: {
