@@ -25,19 +25,6 @@ const isRemovalAfterInstall = (removalValue, { req }) => {
   return removalDate > installDate;
 };
 
-const validatePropertyAddress = (validations) => {
-  return async (req, res, next) => {
-    for (const validation of validations) {
-      const result = await validation.run(req);
-      if (!result.isEmpty()) {
-        return res.status(400).json({ errors: result.array });
-      }
-    }
-
-    next();
-  };
-};
-
 const isValidUSAddress = (propertyAddress) => {
   let isValid = parseAddress(propertyAddress);
   return !!isValid;
@@ -64,6 +51,35 @@ const formatDate = (dateToFormat) => {
   const year = date.getFullYear();
 
   return `${month}-${day}-${year}`;
+};
+
+const validateService = (value, { req }) => {
+  const maxServiceCount = req.session.loadedServices.length;
+
+  if (+value < 1 || value > maxServiceCount) {
+    throw Error(req.session.loadedServicesErrorMessage);
+  } else {
+    return true;
+  }
+};
+
+const validateOrderSelection = (value, { req }) => {
+  const maxOrderSelectionCount = req.session.customer.Orders.length;
+  let isValid = true;
+
+  isValid &&= !isNaN(value);
+  isValid &&= +value <= maxOrderSelectionCount && +value >= 0;
+
+  if (!isValid) {
+    let errorMessage = req.session.customer.Orders.reduce(
+      (propertyList, order, orderNum) =>
+        propertyList + `${orderNum + 1}\) ${order.PropertyAddress}\n`,
+      'Please select a number to remove a sign from a previous install or "0" to start a new install:\n0) New install\n'
+    );
+    throw Error(errorMessage);
+  }
+
+  return isValid;
 };
 
 export const ssd = {
@@ -147,10 +163,7 @@ export const ssd = {
       }
     },
     service: {
-      validation: body("Body")
-        .notEmpty()
-        .isInt({ gt: 0, lt: 5 })
-        .withMessage("Please enter a valid numeric service between 1 and 4."),
+      validation: body("Body").notEmpty().custom(validateService),
       prompt: prompts.getServiceDate,
       action: actions.setService,
       next: {
@@ -209,10 +222,7 @@ export const ssd = {
       }
     },
     select: {
-      validation: body("Body")
-        .notEmpty()
-        .isInt()
-        .withMessage("Please enter a valid numeric selection."),
+      validation: body("Body").notEmpty().custom(validateOrderSelection),
       action: actions.setOrderSelection
     }
   },

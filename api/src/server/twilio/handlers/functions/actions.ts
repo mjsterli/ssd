@@ -59,6 +59,11 @@ export async function initializeCustomer({
   let customer = await getCustomerByPhoneNumberWithOrders(incomingPhoneNumber);
 
   session.loadedServices = services;
+  session.loadedServicesErrorMessage = services.reduce(
+    (serviceList, service) =>
+      `${serviceList}${service.RequestServiceID}) ${service.Description}\n`,
+    `Please enter a valid numeric service between 1 and ${services.length}\n`
+  );
   session.customer = customer ?? {};
   session.customer.PhoneNumber = incomingPhoneNumber;
   if (!customer) {

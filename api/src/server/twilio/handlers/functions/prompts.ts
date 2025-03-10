@@ -114,7 +114,7 @@ export const getOrderSelection = ({ session: { customer } }) => {
   message +=
     "Would you like to remove a sign from one of your installed orders?\n";
   message +=
-    'Please select a number to remove that order or "0" to start a new install:\n';
+    'Please select a number to remove a sign from a previous install or "0" to start a new install:\n';
   message += "0) New install\n";
   message += customer.Orders.reduce(
     (propertyList, order, orderNum) =>
