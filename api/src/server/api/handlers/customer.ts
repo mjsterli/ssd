@@ -3,7 +3,25 @@ import prisma from "../../db";
 export const getCustomers = async (_, res) => {
   const customers = await prisma.customer.findMany();
 
-  res.json({ data: customers });
+  res.json({ customers: customers });
+};
+
+export const getCustomersWithOrders = async (_, res) => {
+  const customers = await prisma.customer.findMany({
+    include: {
+      Orders: {
+        include: {
+          RequestedService: {
+            select: {
+              Description: true
+            }
+          }
+        }
+      }
+    }
+  });
+
+  res.json({ customers: customers });
 };
 
 export const getCustomerByPhoneNumber = async (req, res) => {
