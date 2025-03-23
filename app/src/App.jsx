@@ -6,6 +6,8 @@ import ResponsiveAppBar from "./components/AppBar";
 import Container from '@mui/material/Container'
 import { createTheme } from "@mui/material";
 import { ThemeProvider } from "@emotion/react";
+import Grid from '@mui/material/Grid2';
+import SideMenu from "./components/SideMenu";
 
 const ssdTheme = createTheme({
   palette: {
@@ -20,9 +22,14 @@ const App = () => {
     <>
       <ThemeProvider theme={ssdTheme}>
         <ResponsiveAppBar />
-        <Container maxWidth="lg">
-          <Customers />
-        </Container>
+        <Grid container maxWidth="lg">
+          <Grid size={3}>
+            <SideMenu />
+          </Grid>
+          <Grid size={9}>
+            <Customers />
+          </Grid>
+        </Grid>
       </ThemeProvider>
     </>
   );
