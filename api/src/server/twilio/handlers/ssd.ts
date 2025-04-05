@@ -1,50 +1,59 @@
-import { body, matchedData } from "express-validator";
+import { body, matchedData, ValidationChain } from "express-validator";
 import * as actions from "./functions/actions";
 import * as prompts from "./functions/prompts";
 import { parseFullName } from "parse-full-name";
 import { parseAddress } from "parse-address";
-const isValidDate = (dateToCheck) => {
+import { Request } from "express";
+import { Order } from "../types/interfaces";
+
+const isValidDate = (dateToCheck: string) => {
   const date = new Date(dateToCheck);
   return !isNaN(date.getTime());
 };
 
-const isAFutureDate = (date) => {
+const isAFutureDate = (date: string) => {
   const futureDate = new Date(date),
     currentDate = new Date();
 
   return futureDate > currentDate;
 };
 
-const isRemovalAfterInstall = (removalValue, { req }) => {
-  const orderToRemove = req.session.customer.Orders.find(
-    (order) => order.Remove
+const isRemovalAfterInstall = (
+  removalValue: string,
+  { req }: { req: Request }
+) => {
+  const orderToRemove = req.session.customer.Orders?.find(
+    (order: Order) => order.Remove
   );
-  const installDate = new Date(orderToRemove.RequestedInstallDate),
-    removalDate = new Date(removalValue);
 
-  return removalDate > installDate;
+  if (orderToRemove) {
+    const installDate = new Date(orderToRemove.RequestedInstallDate),
+      removalDate = new Date(removalValue);
+
+    return removalDate > installDate;
+  }
 };
 
-const isValidUSAddress = (propertyAddress) => {
+const isValidUSAddress = (propertyAddress: string) => {
   let isValid = parseAddress(propertyAddress);
   return !!isValid;
 };
 
 const formatRemovalDateAfterInstallDateMessage = (
-  _,
+  _: any,
   {
     req: {
       session: {
         customer: { Orders }
       }
     }
-  }
+  }: any
 ) => {
-  const orderToRemove = Orders.find((order) => order.Remove);
+  const orderToRemove = Orders.find((order: Order) => order.Remove);
   return `Please enter a removal date after the install date: ${formatDate(orderToRemove.RequestedInstallDate)}`;
 };
 
-const formatDate = (dateToFormat) => {
+const formatDate = (dateToFormat: string) => {
   const date = new Date(dateToFormat);
   const day = `${date.getDay() + 1}`.padStart(2, "0");
   const month = `${+date.getMonth() + 1}`.padStart(2, "0");
@@ -53,8 +62,8 @@ const formatDate = (dateToFormat) => {
   return `${month}-${day}-${year}`;
 };
 
-const validateService = (value, { req }) => {
-  const maxServiceCount = req.session.loadedServices.length;
+const validateService = (value: number, { req }: { req: Request }) => {
+  const maxServiceCount = req.session.loadedServices?.length ?? 0;
 
   if (+value < 1 || value > maxServiceCount) {
     throw Error(req.session.loadedServicesErrorMessage);
@@ -63,16 +72,16 @@ const validateService = (value, { req }) => {
   }
 };
 
-const validateOrderSelection = (value, { req }) => {
-  const maxOrderSelectionCount = req.session.customer.Orders.length;
+const validateOrderSelection = (value: number, { req }: { req: Request }) => {
+  const maxOrderSelectionCount = req.session.customer.Orders?.length ?? 0;
   let isValid = true;
 
   isValid &&= !isNaN(value);
   isValid &&= +value <= maxOrderSelectionCount && +value >= 0;
 
   if (!isValid) {
-    let errorMessage = req.session.customer.Orders.reduce(
-      (propertyList, order, orderNum) =>
+    let errorMessage = req.session.customer.Orders?.reduce(
+      (propertyList: string, order, orderNum) =>
         propertyList + `${orderNum + 1}\) ${order.PropertyAddress}\n`,
       'Please select a number to remove a sign from a previous install or "0" to start a new install:\n0) New install\n'
     );
@@ -82,7 +91,7 @@ const validateOrderSelection = (value, { req }) => {
   return isValid;
 };
 
-export const ssd = {
+export const ssd: ssdStates = {
   newCustomer: {
     init: {
       prompt: prompts.greetNewCustomer,
@@ -163,7 +172,9 @@ export const ssd = {
       }
     },
     service: {
-      validation: body("Body").notEmpty().custom(validateService),
+      validation: body("Body")
+        .notEmpty()
+        .custom(validateService as any),
       prompt: prompts.getServiceDate,
       action: actions.setService,
       next: {
@@ -222,7 +233,9 @@ export const ssd = {
       }
     },
     select: {
-      validation: body("Body").notEmpty().custom(validateOrderSelection),
+      validation: body("Body")
+        .notEmpty()
+        .custom(validateOrderSelection as any),
       action: actions.setOrderSelection
     }
   },
@@ -240,7 +253,7 @@ export const ssd = {
         .withMessage(
           'Please enter a valid removal date in the form of "MM/DD/YYYY".'
         )
-        .custom(isRemovalAfterInstall)
+        .custom(isRemovalAfterInstall as any)
         .withMessage(formatRemovalDateAfterInstallDateMessage),
       prompt: prompts.getRemovalConfirmation,
       action: actions.setRemovalDate,

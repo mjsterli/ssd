@@ -1,12 +1,13 @@
 import prisma from "../../db";
+import { Request, Response } from "express";
 
-export const getCustomers = async (_, res) => {
+export const getCustomers = async (_: any, res: Response) => {
   const customers = await prisma.customer.findMany();
 
   res.json({ customers: customers });
 };
 
-export const getCustomersWithOrders = async (_, res) => {
+export const getCustomersWithOrders = async (_: any, res: Response) => {
   const customers = await prisma.customer.findMany({
     include: {
       Orders: {
@@ -24,7 +25,7 @@ export const getCustomersWithOrders = async (_, res) => {
   res.json({ customers: customers });
 };
 
-export const getCustomerByPhoneNumber = async (req, res) => {
+export const getCustomerByPhoneNumber = async (req: Request, res: Response) => {
   const phoneNumber = req.params.phonenumber;
 
   const customer = await prisma.customer.findUnique({

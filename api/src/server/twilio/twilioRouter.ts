@@ -9,9 +9,9 @@ import pgSimpleConnect from "connect-pg-simple";
 
 const router = Router();
 function getSessionConfig() {
-  const databaseConfig = url.parse(process.env.DATABASE_URL);
-  const [username, password] = databaseConfig.auth.split(":");
-  const [, database] = databaseConfig.pathname.split("/");
+  const databaseConfig = url.parse(process.env.DATABASE_URL ?? "");
+  const [username, password] = databaseConfig.auth?.split(":") ?? [];
+  const [, database] = databaseConfig.pathname?.split("/") ?? [];
 
   return {
     user: username,
@@ -32,7 +32,7 @@ router.use(
       pool: pgPool,
       table_name: "user_sessions"
     }),
-    secret: process.env.SECRET_KEY,
+    secret: process.env.SECRET_KEY ?? "",
     resave: false,
     saveUninitialized: true,
     cookie: { maxAge: 1000 * 60 * 2 }

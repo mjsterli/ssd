@@ -1,5 +1,11 @@
-import { PropertyOccupancy, Prisma as prismaNamespace } from "@prisma/client";
+import {
+  PropertyOccupancy,
+  RequestService,
+  Prisma as prismaNamespace
+} from "@prisma/client";
 import prisma from "../../../db";
+import { Session } from "express-session";
+import { Customer, Order } from "../../types/interfaces";
 
 export async function greetNewCustomer() {
   let message =
@@ -9,36 +15,36 @@ export async function greetNewCustomer() {
   message += "[Full Name]\n[Email Address]";
 
   return message;
-};
+}
 
-export async function greetWithNewOrder({ session: { customer } }) {
+export async function greetWithNewOrder({ session: { customer } }: Request) {
   let message = `Welcome back ${customer.FirstName} to Simple Sign Delivery automated ordering system for sign pick-up and delivery.\n`;
   message +=
     "What is the property address that you would like to have you sign delivered to?\n";
 
   return message;
-};
+}
 
-export async function getEmail({ session }) {
+export async function getEmail({ session }: Request) {
   let message = `Hi ${session.customer.Name}\n`;
   message += "Please reply with your Email Address.\n";
 
   return message;
-};
+}
 
 export async function getBrokerage() {
   return "What Real Estate Brokerage are you associated with?";
-};
+}
 
 export async function getPropertyAddress() {
   return "What is the property address that you would like to have you sign delivered to?\n";
-};
+}
 
 export async function getCounty() {
   return "Which county is the property located?";
-};
+}
 
-export async function getService({ session }) {
+export async function getService({ session }: Request) {
   let message =
     "Please reply with corresponding number of the Simple Installation Service Requested:\n";
   message += session.loadedServices.reduce(
@@ -48,15 +54,15 @@ export async function getService({ session }) {
   );
 
   return message;
-};
+}
 
 export async function getServiceDate() {
   return "What date would you like your service request to be fullfilled?\n";
-};
+}
 
 export async function getRemovalDate() {
   return "What date would you like your sign removed?\n";
-};
+}
 
 export async function getOccupancy() {
   let message =
@@ -66,40 +72,44 @@ export async function getOccupancy() {
   message += "3) Tenant Occupied\n";
 
   return message;
-};
+}
 
 export async function getInstallConfirmation({
   session: {
     loadedServices,
     customer: { newOrder: order }
   }
-}) {
-  let message = "Please confirm the order install:\n";
-  message += `Address:        ${order.PropertyAddress}\n`;
-  message += `County:         ${order.PropertyCounty}\n`;
-  message += `Service:        ${loadedServices.find((service) => service.RequestServiceID == order.RequestedServiceID).Description}\n`;
-  message += `Service Date:   ${new Date(order.RequestedInstallDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}\n`;
-  message += `Occupancy:      ${occupancies[+order.Occupancy - 1].description}\n\n`;
-  message += "(C) to Confirm or (N) to Cancel";
+}: Request) {
+  if (order) {
+    let message = "Please confirm the order install:\n";
+    message += `Address:        ${order.PropertyAddress}\n`;
+    message += `County:         ${order.PropertyCounty}\n`;
+    message += `Service:        ${loadedServices.find((service: RequestService) => service.RequestServiceID == order.RequestedServiceID)?.Description ?? ""}\n`;
+    message += `Service Date:   ${new Date(order.RequestedInstallDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}\n`;
+    message += `Occupancy:      ${occupancies[+order.Occupancy - 1].description}\n\n`;
+    message += "(C) to Confirm or (N) to Cancel";
 
-  return message;
-};
+    return message;
+  }
+}
 
-export async function endConversation({ session }) {
+export async function endConversation({ session }: Request) {
   if (isConfirmed(session)) {
     await saveCustomerOrder(session);
-    session.destroy();
+    session.destroy((_: any): void => {});
     return "Your order has been placed.\nThank you for using the Simple Sign Delivery Automated Service.";
   } else {
-    session.destroy();
+    session.destroy((_: any): void => {});
     return "Your order has been canceled.\nThank you for using the Simple Sign Delivery Automated Service.";
   }
 }
 
-const isConfirmed = ({ customer }) => {
+const isConfirmed = ({ customer }: Session) => {
   return !!customer.newOrder
     ? customer.newOrder.isConfirmed
-    : !!customer.Orders.find((order) => order.Remove && order.isConfirmed);
+    : !!customer.Orders?.find(
+        (order: Order) => order.Remove && order.isConfirmed
+      );
 };
 
 const occupancies = [
@@ -108,15 +118,15 @@ const occupancies = [
   { dbName: PropertyOccupancy.TENANT, description: "Tenant Occupied" }
 ];
 
-export const getOrderSelection = ({ session: { customer } }) => {
+export const getOrderSelection = ({ session: { customer } }: Request) => {
   let message = `Welcome back ${customer.FirstName} to Simple Sign Delivery automated ordering system for sign pick-up and delivery.\n`;
-  message += `You currently have ${customer.Orders.length} installed orders.\n`;
+  message += `You currently have ${customer.Orders?.length ?? 0} installed orders.\n`;
   message +=
     "Would you like to remove a sign from one of your installed orders?\n";
   message +=
     'Please select a number to remove a sign from a previous install or "0" to start a new install:\n';
   message += "0) New install\n";
-  message += customer.Orders.reduce(
+  message += customer.Orders?.reduce(
     (propertyList, order, orderNum) =>
       propertyList + `${orderNum + 1}\) ${order.PropertyAddress}\n`,
     ""
@@ -125,20 +135,22 @@ export const getOrderSelection = ({ session: { customer } }) => {
   return message;
 };
 
-export async function getRemovalConfirmation({ session }) {
-  let order = session.customer.Orders.find((order) => order.Remove);
-  let message = "Please confirm the order to remove:\n";
-  message += `Address:      ${order.PropertyAddress}\n`;
-  message += `County:       ${order.PropertyCounty}\n`;
-  message += `Service:      ${order.RequestedService.Description}\n`;
-  message += `Service Date: ${new Date(order.RequestedRemoveDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}\n`;
-  message += `Occupancy:    ${order.Occupancy}\n\n`;
-  message += "(C) to Confirm or (N) to Cancel";
+export async function getRemovalConfirmation({ session }: Request) {
+  let order = session.customer.Orders?.find((order) => order.Remove);
+  if (order) {
+    let message = "Please confirm the order to remove:\n";
+    message += `Address:      ${order.PropertyAddress}\n`;
+    message += `County:       ${order.PropertyCounty}\n`;
+    message += `Service:      ${order.RequestedService?.Description}\n`;
+    message += `Service Date: ${new Date(order?.RequestedRemoveDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}\n`;
+    message += `Occupancy:    ${order.Occupancy}\n\n`;
+    message += "(C) to Confirm or (N) to Cancel";
 
-  return message;
+    return message;
+  }
 }
 
-async function saveCustomerOrder(session) {
+async function saveCustomerOrder(session: Session) {
   let { customer } = session;
 
   if (!customer.CustomerID) {
@@ -149,11 +161,14 @@ async function saveCustomerOrder(session) {
   if (!!customer.newOrder) {
     await saveOrder(customer);
   } else {
-    await removeOrder(customer.Orders.find((order) => order.Remove));
+    if (customer.Orders) {
+      let orderToRemove = customer.Orders.find((order: Order) => order.Remove);
+      if (orderToRemove) await removeOrder(orderToRemove);
+    }
   }
 }
 
-async function saveCustomerAndOrder(customer) {
+async function saveCustomerAndOrder(customer: Customer) {
   let {
     Title,
     FirstName,
@@ -193,31 +208,31 @@ async function saveCustomerAndOrder(customer) {
       }
     }
   });
+}
+
+const saveOrder = async ({ newOrder, CustomerID }: Customer) => {
+  if (newOrder) {
+    const {
+      PropertyAddress,
+      PropertyCounty,
+      RequestedServiceID,
+      RequestedInstallDate,
+      Occupancy
+    } = newOrder;
+    await prisma.order.create({
+      data: {
+        PropertyAddress: PropertyAddress,
+        PropertyCounty: PropertyCounty,
+        RequestedServiceID: RequestedServiceID,
+        RequestedInstallDate: new Date(RequestedInstallDate),
+        Occupancy: occupancies[Occupancy - 1].dbName,
+        CustomerID: CustomerID
+      }
+    });
+  }
 };
 
-const saveOrder = async ({
-  newOrder: {
-    PropertyAddress,
-    PropertyCounty,
-    RequestedServiceID,
-    RequestedInstallDate,
-    Occupancy
-  },
-  CustomerID
-}) => {
-  await prisma.order.create({
-    data: {
-      PropertyAddress: PropertyAddress,
-      PropertyCounty: PropertyCounty,
-      RequestedServiceID: RequestedServiceID,
-      RequestedInstallDate: new Date(RequestedInstallDate),
-      Occupancy: occupancies[Occupancy - 1].dbName,
-      CustomerID: CustomerID
-    }
-  });
-};
-
-const removeOrder = async (order) => {
+const removeOrder = async (order: Order) => {
   let orderWhere: prismaNamespace.OrderWhereUniqueInput = {
     OrderID: order.OrderID
   };

@@ -8,10 +8,11 @@ import { faGear, faHouse, faSignHanging, faUserClock, faUserGroup } from '@forta
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ListItem, ListItemIcon, ListSubheader } from '@mui/material';
 import Chip from '@mui/material/Chip';
+import { useTheme } from '@emotion/react';
 
 export default function SelectedListItem() {
   const [selectedIndex, setSelectedIndex] = React.useState(1);
-
+  const theme = useTheme();
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
   };
@@ -41,7 +42,7 @@ export default function SelectedListItem() {
           </ListItemIcon>
           <ListItemText primary="Customers" />
           <ListItemIcon>
-            <Chip label='16' />
+            <Chip label='16' color='primary' />
             </ListItemIcon>
             </ListItemButton>
         <ListItemButton

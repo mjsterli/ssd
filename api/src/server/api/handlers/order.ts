@@ -1,12 +1,13 @@
 import prisma from "../../db";
+import { Request, Response } from "express";
 
-export const getOrders = async (_, res) => {
+export const getOrders = async (_: any, res: Response) => {
   const orders = await prisma.order.findMany();
 
   res.json({ orders: orders });
 };
 
-export const getOrder = async (req, res) => {
+export const getOrder = async (req: Request, res: Response) => {
   const orderid = req.params.orderid ?? req.query.orderid;
 
   const order = await prisma.order.findUnique({

@@ -8,6 +8,7 @@ import { createTheme } from "@mui/material";
 import { ThemeProvider } from "@emotion/react";
 import Grid from '@mui/material/Grid2';
 import SideMenu from "./components/SideMenu";
+import RightPane from './views/RightPane';
 
 const ssdTheme = createTheme({
   palette: {
@@ -27,7 +28,7 @@ const App = () => {
             <SideMenu />
           </Grid>
           <Grid size={9}>
-            <Customers />
+            <RightPane />
           </Grid>
         </Grid>
       </ThemeProvider>

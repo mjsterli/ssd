@@ -3,6 +3,7 @@ import { matchedData } from "express-validator";
 import { parseFullName } from "parse-full-name";
 import axios from "axios";
 import pkg from "parse-address";
+import { Customer } from "../../types/interfaces";
 
 const { parser } = pkg;
 
@@ -11,8 +12,11 @@ const getServices = async () => {
   return services;
 };
 
-const getCustomerByPhoneNumberWithOrders = async (phoneNumber) => {
+const getCustomerByPhoneNumberWithOrders = async (phoneNumber: string) => {
   const customer = await prisma.customer.findFirst({
+    include: {
+      Orders: true
+    },
     where: {
       PhoneNumber: phoneNumber
     },
@@ -43,7 +47,7 @@ const getCustomerByPhoneNumberWithOrders = async (phoneNumber) => {
   return customer;
 };
 
-const parseGreetingResponse = (greetingResponses) => {
+const parseGreetingResponse = (greetingResponses: string[]) => {
   let name = parseFullName(greetingResponses[0]),
     email = greetingResponses[1] ? greetingResponses[1] : null,
     brokerage = greetingResponses[2] ? greetingResponses[2] : null;
@@ -54,7 +58,7 @@ const parseGreetingResponse = (greetingResponses) => {
 export async function initializeCustomer({
   session,
   body: { From: incomingPhoneNumber }
-}) {
+}: Request) {
   let services = await getServices();
   let customer = await getCustomerByPhoneNumberWithOrders(incomingPhoneNumber);
 
@@ -78,7 +82,10 @@ export async function initializeCustomer({
   }
 }
 
-export async function setCustomer({ session, body: { Body: smsResponse } }) {
+export async function setCustomer({
+  session,
+  body: { Body: smsResponse }
+}: Request) {
   const responseLines = smsResponse.split("\n");
 
   if (responseLines.length === 1) {
@@ -100,17 +107,20 @@ export async function setCustomer({ session, body: { Body: smsResponse } }) {
   if (email) session.customer.EmailAddress = email;
 }
 
-export async function setEmail({ session, body: { Body: smsEmail } }) {
+export async function setEmail({ session, body: { Body: smsEmail } }: Request) {
   session.customer.EmailAddress = smsEmail;
 }
 
-export async function setBrokerage({ session, body: { Body: smsBrokerage } }) {
+export async function setBrokerage({
+  session,
+  body: { Body: smsBrokerage }
+}: Request) {
   session.customer.Brokerage = smsBrokerage;
   session.ssdState = "install";
   session.ssdProcess = "init";
 }
 
-export async function setPropertyAddress(req) {
+export async function setPropertyAddress(req: Request) {
   let isValid = false,
     response;
   const propertyAddress = matchedData(req).Body;
