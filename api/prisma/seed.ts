@@ -1,3 +1,4 @@
+import { generateCustomerID } from "../shared/operations";
 import { PrismaClient, PropertyOccupancy } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -66,6 +67,7 @@ async function main() {
   /***  Customers ***/
   const lindsay = await prisma.customer.create({
     data: {
+      CustomerID: generateCustomerID("+15081994316"),
       FirstName: "Lindsay",
       LastName: "Gilbert",
       PhoneNumber: "+15081994316",
@@ -75,6 +77,7 @@ async function main() {
   });
   const camilla = await prisma.customer.create({
     data: {
+      CustomerID: generateCustomerID("+14017591138"),
       FirstName: "Camilla",
       LastName: "Mercy",
       PhoneNumber: "+14017591138",
@@ -82,8 +85,10 @@ async function main() {
       Brokerage: "Keller Williams"
     }
   });
+  const sullivanID = generateCustomerID("+12144941167");
   const sullivan = await prisma.customer.create({
     data: {
+      CustomerID: sullivanID,
       FirstName: "Sullivan",
       LastName: "Goldie",
       PhoneNumber: "+12144941167",
@@ -92,6 +97,7 @@ async function main() {
       Orders: {
         create: [
           {
+            OrderID: `${sullivanID}-0001`,
             PropertyAddress: "4671 Copper Ln. Fort Worth, TX. 75045",
             PropertyCounty: "Tarrant County",
             RequestedServiceID: comboBox.RequestServiceID,
@@ -102,8 +108,10 @@ async function main() {
       }
     }
   });
+  const zacheryID = generateCustomerID("+15099671900");
   const zachery = await prisma.customer.create({
     data: {
+      CustomerID: zacheryID,
       FirstName: "Zachery",
       LastName: "Caelan",
       PhoneNumber: "+15099671900",
@@ -112,6 +120,7 @@ async function main() {
       Orders: {
         create: [
           {
+            OrderID: `${zacheryID}-0001`,
             PropertyAddress: "3474 Vista St. Rowlett, TX. 75032",
             PropertyCounty: "Rowlett County",
             RequestedServiceID: realEstateSign.RequestServiceID,
@@ -122,8 +131,10 @@ async function main() {
       }
     }
   });
+  const tonyaID = generateCustomerID("+12145000142");
   const tonya = await prisma.customer.create({
     data: {
+      CustomerID: tonyaID,
       FirstName: "Tonya",
       LastName: "Sterling",
       PhoneNumber: "+12145000142",
@@ -132,6 +143,7 @@ async function main() {
       Orders: {
         create: [
           {
+            OrderID: `${tonyaID}-0001`,
             PropertyAddress: "2649 Sherwood Dr., Lewisville TX. 75067",
             PropertyCounty: "Denton County",
             RequestedServiceID: openHouseSignPlacement.RequestServiceID,
@@ -142,8 +154,10 @@ async function main() {
       }
     }
   });
+  const latrelleID = generateCustomerID("+17546329514");
   const latrelle = await prisma.customer.create({
     data: {
+      CustomerID: latrelleID,
       FirstName: "Latrelle",
       LastName: "Stokes",
       PhoneNumber: "+17546329514",
@@ -152,6 +166,7 @@ async function main() {
       Orders: {
         create: [
           {
+            OrderID: `${latrelleID}-0001`,
             PropertyAddress: "5642 Bay Lane. Frisco, TX. 75024",
             PropertyCounty: "Collin County",
             RequestedServiceID: comboBox.RequestServiceID,
@@ -159,6 +174,7 @@ async function main() {
             Occupancy: PropertyOccupancy.VACANT
           },
           {
+            OrderID: `${latrelleID}-0002`,
             PropertyAddress: "5642 Bay Lane. Frisco, TX. 75024",
             PropertyCounty: "Collin County",
             RequestedServiceID: comboBox.RequestServiceID,
@@ -166,6 +182,7 @@ async function main() {
             Occupancy: PropertyOccupancy.VACANT
           },
           {
+            OrderID: `${latrelleID}-0003`,
             PropertyAddress: "5372 Old Lane. Irving, TX. 75085",
             PropertyCounty: "Dallas County",
             RequestedServiceID: openHouseSignPlacement.RequestServiceID,
@@ -176,8 +193,10 @@ async function main() {
       }
     }
   });
+  const lynellID = generateCustomerID("+12145631193");
   const lynell = await prisma.customer.create({
     data: {
+      CustomerID: lynellID,
       Title: "Mrs.",
       FirstName: "Lynell",
       MiddleName: "Jones",
@@ -188,6 +207,7 @@ async function main() {
       Orders: {
         create: [
           {
+            OrderID: `${lynellID}-0001`,
             PropertyAddress: "4739 Bradford St. Plano, TX. 75024",
             PropertyCounty: "Collin County",
             RequestedServiceID: supraIBox.RequestServiceID,
@@ -201,6 +221,7 @@ async function main() {
             }
           },
           {
+            OrderID: `${lynellID}-0002`,
             PropertyAddress: "29188 Amberly Ct. Little Elm, TX. 75068",
             PropertyCounty: "Denton County",
             RequestedServiceID: supraIBox.RequestServiceID,
@@ -208,6 +229,7 @@ async function main() {
             Occupancy: PropertyOccupancy.TENANT
           },
           {
+            OrderID: `${lynellID}-0003`,
             PropertyAddress: "1221 Napier Dr. Plano, TX. 75024",
             PropertyCounty: "Collin County",
             RequestedServiceID: openHouseSignPlacement.RequestServiceID,
@@ -215,6 +237,7 @@ async function main() {
             Occupancy: PropertyOccupancy.OWNER
           },
           {
+            OrderID: `${lynellID}-0004`,
             PropertyAddress: "11819 Sycamore Dr. Mckinney, TX. 75071",
             PropertyCounty: "Collin County",
             RequestedServiceID: realEstateSign.RequestServiceID,
@@ -222,6 +245,7 @@ async function main() {
             Occupancy: PropertyOccupancy.VACANT
           },
           {
+            OrderID: `${lynellID}-0005`,
             PropertyAddress: "38492 Knight Ave. Dallas, TX. 75022",
             PropertyCounty: "Dallas County",
             RequestedServiceID: realEstateSign.RequestServiceID,
@@ -235,6 +259,7 @@ async function main() {
             }
           },
           {
+            OrderID: `${lynellID}-0006`,
             PropertyAddress: "97857 Amber Ave. Dallas, TX. 75022",
             PropertyCounty: "Dallas County",
             RequestedServiceID: supraIBox.RequestServiceID,

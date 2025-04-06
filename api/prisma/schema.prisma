@@ -26,7 +26,7 @@ enum PropertyOccupancy {
 }
 
 model Customer {
-  CustomerID   String  @id @default(uuid())
+  CustomerID   String  @id
   Title        String?
   FirstName    String
   MiddleName   String?
@@ -38,9 +38,8 @@ model Customer {
   Orders       Order[]
 }
 
-
 model Order {
-  OrderID              String            @id @default(uuid())
+  OrderID              String            @id
   CreatedAt            DateTime          @default(now())
   PropertyAddress      String
   PropertyCounty       String?
