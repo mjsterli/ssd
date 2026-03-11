@@ -1,0 +1,29 @@
+Generated Data Summary (generated.ts)
+======================================
+
+Employees: 20
+  - Hardcoded with diverse names, created via prisma.employee.create
+
+Customers: 75
+  - Each with a unique phone number, email, CustomerID (format: XXXX-YYYY),
+    and a random DFW-area brokerage
+
+Orders: 100 total, distributed as follows:
+  - 21 customers x 0 orders
+  - 27 customers x 1 order
+  - 15 customers x 2 orders
+  -  7 customers x 3 orders
+  -  3 customers x 4 orders
+  -  2 customers x 5 orders
+
+Request Services:
+  - Upserted (safe to run alongside or after seed.ts)
+  - IDs 1-4: Real Estate Sign, Supra iBox, Combo Box, Open House Sign Placement
+
+Orders include:
+  - Random DFW-area addresses and counties
+  - Service IDs 1-4 (randomly assigned)
+  - Install dates ranging from 2020-2025
+  - Random occupancy types: VACANT, OWNER, TENANT
+
+Run with: npx ts-node prisma/generated.ts
