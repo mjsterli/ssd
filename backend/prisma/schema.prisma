@@ -55,9 +55,10 @@ model Order {
 }
 
 model Employee {
-  EmployeeID   String         @id @default(uuid())
+  EmployeeID   String         @id
   FirstName    String
   LastName     String
+  PhoneNumber  String         @unique
   Fullfillment Fullfillment[]
 }
 
