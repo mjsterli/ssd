@@ -74,6 +74,9 @@ const LOCATIONS = [
   { city: "Southlake",    state: "TX", zip: "76092", county: "Tarrant County"  },
 ];
 
+const EMAIL_DOMAINS = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com", "aol.com", "protonmail.com", "mail.com", "zoho.com", "yandex.com", 
+                       "gmx.com", "live.com", "msn.com", "me.com", "mac.com", "tutanota.com", "fastmail.com", "hey.com", "pm.me", "rediffmail.com"];
+
 const OCCUPANCIES: PropertyOccupancy[] = [
   PropertyOccupancy.VACANT,
   PropertyOccupancy.OWNER,
@@ -184,7 +187,7 @@ async function main() {
     const lastName  = LAST_NAMES[(i * 11 + 5) % LAST_NAMES.length];
     const phone     = generatePhone(usedPhones);
     const customerID = makeCustomerID(phone);
-    const email     = `${firstName.toLowerCase()}.${lastName.toLowerCase()}${i + 1}@example.com`;
+    const email     = `${firstName.toLowerCase()}.${lastName.toLowerCase()}${i + 1}@${EMAIL_DOMAINS[(i * 23 +7) % EMAIL_DOMAINS.length]}`;
     const brokerage = BROKERAGES[i % BROKERAGES.length];
 
     const orderCreates = Array.from({ length: numOrders }, (_, orderIdx) => {
