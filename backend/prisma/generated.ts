@@ -6,7 +6,7 @@ const rand = (min: number, max: number) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
 const pick = <T>(arr: T[]): T => arr[rand(0, arr.length - 1)];
 const pad = (n: number) => `${n}`.padStart(4, "0");
-const makeCustomerID = (phone: string) =>
+const makeIDFromPhoneNumber = (phone: string) =>
   `${pad(rand(0, 9999))}-${phone.substring(8, 12)}`;
 
 const FIRST_NAMES = [
@@ -145,28 +145,39 @@ async function main() {
 
   void realEstateSign, supraIBox, comboBox, openHouseSignPlacement;
 
+  const makeEmployee = (firstName: string, lastName: string) => {
+    const phone = generatePhone(employeePhones);
+    return {
+      FirstName: firstName,
+      LastName: lastName,
+      PhoneNumber: phone,
+      EmployeeID: makeIDFromPhoneNumber(phone)
+    };
+  };
+ 
   /** 20 Employees **/
+  const employeePhones = new Set<string>();
   const employeeData = [
-    { FirstName: "Aiden",    LastName: "Brooks"    },
-    { FirstName: "Sofia",    LastName: "Patel"     },
-    { FirstName: "Marcus",   LastName: "Flynn"     },
-    { FirstName: "Elena",    LastName: "Vasquez"   },
-    { FirstName: "Tyrone",   LastName: "Hughes"    },
-    { FirstName: "Priya",    LastName: "Sharma"    },
-    { FirstName: "Darnell",  LastName: "Owens"     },
-    { FirstName: "Hannah",   LastName: "Carlson"   },
-    { FirstName: "Rafael",   LastName: "Mendoza"   },
-    { FirstName: "Claire",   LastName: "Nguyen"    },
-    { FirstName: "Isaiah",   LastName: "Foster"    },
-    { FirstName: "Amara",    LastName: "Osei"      },
-    { FirstName: "Garrett",  LastName: "Simmons"   },
-    { FirstName: "Yuki",     LastName: "Tanaka"    },
-    { FirstName: "Caleb",    LastName: "Warren"    },
-    { FirstName: "Nadia",    LastName: "Petrov"    },
-    { FirstName: "DeShawn",  LastName: "Alexander" },
-    { FirstName: "Ingrid",   LastName: "Larsson"   },
-    { FirstName: "Brendan",  LastName: "O'Neil"    },
-    { FirstName: "Fatima",   LastName: "Al-Hassan" },
+    makeEmployee("Aiden",  "Brooks"),
+    makeEmployee("Sofia",  "Patel"),
+    makeEmployee("Marcus", "Flynn"),
+    makeEmployee("Elena",  "Vasquez"),
+    makeEmployee("Tyrone", "Hughes"),
+    makeEmployee("Priya",  "Sharma"),
+    makeEmployee("Darnell","Owens"),
+    makeEmployee("Hannah", "Carlson",  ),
+    makeEmployee("Rafael", "Mendoza",  ),
+    makeEmployee("Claire", "Nguyen",   ),
+    makeEmployee("Isaiah", "Foster",   ),
+    makeEmployee("Amara",  "Osei",     ),
+    makeEmployee("Garrett","Simmons",  ),
+    makeEmployee("Yuki",   "Tanaka",   ),
+    makeEmployee("Caleb",  "Warren",   ),
+    makeEmployee("Nadia",  "Petrov",   ),
+    makeEmployee("DeShawn","Alexander",),
+    makeEmployee("Ingrid", "Larsson",  ),
+    makeEmployee("Brendan","O'Neil",   ),
+    makeEmployee("Fatima", "Al-Hassan",),
   ];
 
   const employees = await Promise.all(
@@ -178,7 +189,7 @@ async function main() {
   console.log(`Created ${employees.length} employees.`);
 
   /** 75 Customers with 100 total orders **/
-  const usedPhones = new Set<string>();
+  const usedPhones = new Set<string>(employees.map((e) => e.PhoneNumber));
   let totalOrders = 0;
 
   for (let i = 0; i < ORDER_COUNTS.length; i++) {
@@ -186,7 +197,7 @@ async function main() {
     const firstName = FIRST_NAMES[(i * 7 + 3) % FIRST_NAMES.length];
     const lastName  = LAST_NAMES[(i * 11 + 5) % LAST_NAMES.length];
     const phone     = generatePhone(usedPhones);
-    const customerID = makeCustomerID(phone);
+    const customerID = makeIDFromPhoneNumber(phone);
     const email     = `${firstName.toLowerCase()}.${lastName.toLowerCase()}${i + 1}@${EMAIL_DOMAINS[(i * 23 +7) % EMAIL_DOMAINS.length]}`;
     const brokerage = BROKERAGES[i % BROKERAGES.length];
 
