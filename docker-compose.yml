@@ -1,16 +1,16 @@
 services:
-  db:
-    image: mysql
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: ssd
-      MYSQL_DATABASE: ssd
-    command: mysqld
-    ports:
-      - "3306:3306"
-    volumes:
-      - db_data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+  # db:
+  #   image: mysql
+  #   restart: always
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ssd
+  #     MYSQL_DATABASE: ssd
+  #   command: mysqld
+  #   ports:
+  #     - "3306:3306"
+  #   volumes:
+  #     - db_data:/var/lib/mysql
+  #     - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
   postgres:
     image: postgres:15-alpine
@@ -38,6 +38,8 @@ services:
         condition: service_healthy
     environment:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/ssd
+    ports:
+      - "3000:3000"
     command: sh -c "npx prisma db push && npx prisma db seed && npm run dev"
 
 
