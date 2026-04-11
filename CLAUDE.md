@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-SSD (Simple Sign Delivery) is a full-stack real estate service management system. It has a Node.js/Express/TypeScript backend, a PostgreSQL database managed via Prisma ORM, and two frontend implementations (Angular and React — both are maintained in parallel).
+SSD (Simple Sign Delivery) is a full-stack real estate service management system. It has a Node.js/Express/TypeScript backend, a PostgreSQL database managed via Prisma ORM, and two frontend implementations (Angular and React — both are maintained in parallel and render the same dashboard against the same `/api` endpoints).
 
 ## Development Setup
 
@@ -71,10 +71,17 @@ npm run build        # Production build
 - **Attachment** — Binary file storage per order
 
 ### Angular Frontend (`/frontend/ssd-angular`)
-Standalone component architecture with Angular 21, TailwindCSS 4, and Vitest for unit tests.
+Angular 21 standalone components, Angular Material 21 (toolbar/sidenav/list/table/paginator), TailwindCSS 4 for layout, FontAwesome for sidebar icons. Routing via `provideRouter` with lazy-loaded pages:
+- `app/pages/home` — landing route (`/`)
+- `app/pages/customers` — `/customers`, `mat-table` fed by `CustomersService`
+- `app/pages/orders` — `/orders`, `mat-table` + `mat-paginator` fed by `OrdersService`
+
+Shared shell lives under `app/components/` (`app-bar`, `side-menu`, `logo`). API calls go through `app/services/customers.service.ts` and `orders.service.ts` using `HttpClient`. The dev server proxies `/api` → `localhost:3000` via `proxy.conf.json` (wired in `angular.json` → serve options). Vitest for unit tests.
+
+Note: `package.json` was historically overwritten with package-lock content — if you see `lockfileVersion`/`packages` fields in it, it's broken and needs rewriting before `npm install` will work.
 
 ### React Frontend (`/frontend/ssd-react`)
-Vite-based app with TanStack Router (file-based routing), MUI components, and styled-components. The Vite dev server proxies `/api` requests to `localhost:3000`.
+Vite-based app with TanStack Router (file-based routing), MUI components, and styled-components. The Vite dev server proxies `/api` requests to `localhost:3000`. This was the original frontend; the Angular app is a port of it, so the two should stay feature-equivalent.
 
 ## Code Style
 
