@@ -1,0 +1,40 @@
+<mat-nav-list>
+  <div mat-subheader>Menu</div>
+
+  <a
+    mat-list-item
+    routerLink="/"
+    routerLinkActive="active-link"
+    [routerLinkActiveOptions]="{ exact: true }"
+  >
+    <fa-icon class="menu-icon" [icon]="faHouse" />
+    <span matListItemTitle>DashBoard</span>
+  </a>
+
+  <a mat-list-item routerLink="/customers" routerLinkActive="active-link">
+    <fa-icon class="menu-icon" [icon]="faUserGroup" />
+    <span matListItemTitle>Customers</span>
+    <mat-chip class="trailing">16</mat-chip>
+  </a>
+
+  <a mat-list-item routerLink="/orders" routerLinkActive="active-link">
+    <fa-icon class="menu-icon" [icon]="faSignHanging" />
+    <span matListItemTitle>Orders</span>
+  </a>
+</mat-nav-list>
+
+<mat-divider />
+
+<mat-nav-list>
+  <div mat-subheader>Tools</div>
+
+  <a mat-list-item>
+    <fa-icon class="menu-icon" [icon]="faGear" />
+    <span matListItemTitle>Settings</span>
+  </a>
+
+  <a mat-list-item>
+    <fa-icon class="menu-icon" [icon]="faUserClock" />
+    <span matListItemTitle>Employees</span>
+  </a>
+</mat-nav-list>

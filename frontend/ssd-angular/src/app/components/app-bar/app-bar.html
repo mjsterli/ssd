@@ -1,0 +1,26 @@
+<mat-toolbar class="ssd-toolbar">
+  <app-logo />
+
+  <span class="spacer"></span>
+
+  <div class="toolbar-actions">
+    <mat-icon matBadge="7" matBadgeColor="warn" aria-label="Notifications">notifications</mat-icon>
+    <mat-icon matBadge="4" matBadgeColor="warn" aria-label="Mail">mail</mat-icon>
+
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="userMenu"
+      matTooltip="Open settings"
+      aria-label="Open user menu"
+    >
+      <img class="avatar" src="assets/robert.johnson.jpg" alt="Robert Johnson" />
+    </button>
+    <span class="user-name">Robert Johnson</span>
+
+    <mat-menu #userMenu="matMenu">
+      @for (setting of settings; track setting) {
+        <button mat-menu-item>{{ setting }}</button>
+      }
+    </mat-menu>
+  </div>
+</mat-toolbar>

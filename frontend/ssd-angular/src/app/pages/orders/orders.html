@@ -1,0 +1,57 @@
+<div class="orders-container">
+  <table mat-table [dataSource]="dataSource" aria-label="Orders">
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-checkbox
+          (change)="toggleAll()"
+          [checked]="isAllSelected() && selection.hasValue()"
+          [indeterminate]="selection.hasValue() && !isAllSelected()"
+        />
+      </th>
+      <td mat-cell *matCellDef="let order">
+        <mat-checkbox
+          (click)="$event.stopPropagation()"
+          (change)="selection.toggle(order)"
+          [checked]="selection.isSelected(order)"
+        />
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="orderId">
+      <th mat-header-cell *matHeaderCellDef>Order #</th>
+      <td mat-cell *matCellDef="let order">{{ order.OrderID }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="address">
+      <th mat-header-cell *matHeaderCellDef>Address</th>
+      <td mat-cell *matCellDef="let order">{{ order.PropertyAddress }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="county">
+      <th mat-header-cell *matHeaderCellDef>County</th>
+      <td mat-cell *matCellDef="let order">{{ order.PropertyCounty }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="installDate">
+      <th mat-header-cell *matHeaderCellDef>Install Date</th>
+      <td mat-cell *matCellDef="let order">
+        {{ order.RequestedInstallDate | date: 'mediumDate' }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="service">
+      <th mat-header-cell *matHeaderCellDef>Service</th>
+      <td mat-cell *matCellDef="let order">{{ order.RequestedServiceID }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  <mat-paginator
+    [pageSizeOptions]="[5, 10, 25]"
+    [pageSize]="10"
+    showFirstLastButtons
+    aria-label="Select page of orders"
+  />
+</div>
