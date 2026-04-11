@@ -1,4 +1,5 @@
 import { Router } from "express";
+import twilio from "twilio";
 import smsTwilioPrompt from "./handlers/smsTwilioPrompt";
 import smsTwilioAction from "./handlers/smsTwilioAction";
 import smsTwilioValidate from "./middleware/smsTwilioValidator";
@@ -39,6 +40,17 @@ router.use(
   })
 );
 
-router.post("/webhook", smsTwilioValidate, smsTwilioAction, smsTwilioPrompt);
+const twilioSignatureCheck = twilio.webhook({
+  validate: true,
+  authToken: process.env.TWILIO_AUTH_TOKEN
+});
+
+router.post(
+  "/webhook",
+  twilioSignatureCheck,
+  smsTwilioValidate,
+  smsTwilioAction,
+  smsTwilioPrompt
+);
 
 export default router;
