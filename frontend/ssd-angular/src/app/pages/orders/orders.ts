@@ -86,6 +86,30 @@ import { OrdersService } from '../../services/orders.service';
         border-top: 1px solid #e5e7eb;
         background: #ffffff;
       }
+
+      :host ::ng-deep .mat-mdc-checkbox .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background,
+      :host ::ng-deep .mat-mdc-checkbox .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
+        background-color: var(--ssd-primary) !important;
+        border-color: var(--ssd-primary) !important;
+      }
+
+      :host ::ng-deep .mat-mdc-checkbox .mdc-checkbox__checkmark {
+        color: #ffffff !important;
+      }
+
+      :host ::ng-deep .mat-mdc-checkbox .mdc-checkbox__mixedmark {
+        border-color: #ffffff !important;
+      }
+
+      :host ::ng-deep .mat-mdc-checkbox .mdc-checkbox__ripple,
+      :host ::ng-deep .mat-mdc-checkbox .mat-mdc-checkbox-ripple .mat-ripple-element {
+        background-color: var(--ssd-primary) !important;
+      }
+
+      :host ::ng-deep .mat-mdc-checkbox.mat-mdc-checkbox-checked .mat-ripple-element,
+      :host ::ng-deep .mat-mdc-checkbox .mdc-checkbox--selected .mdc-checkbox__ripple {
+        background-color: var(--ssd-primary) !important;
+      }
     `,
   ],
 })
