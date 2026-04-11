@@ -1,10 +1,12 @@
-<app-app-bar />
+<div class="app-container">
+  <app-app-bar />
 
-<div class="shell mx-auto max-w-screen-xl flex">
-  <aside class="w-1/4 min-w-[220px] border-r border-gray-200">
-    <app-side-menu />
-  </aside>
-  <main class="w-3/4 flex-1">
-    <router-outlet />
-  </main>
+  <div class="shell flex">
+    <aside class="sidebar">
+      <app-side-menu />
+    </aside>
+    <main class="content">
+      <router-outlet />
+    </main>
+  </div>
 </div>
