@@ -4,7 +4,6 @@
 }
 
 .shell {
-  min-height: calc(100vh - 64px);
   background: #f3f4f6;
 }
 

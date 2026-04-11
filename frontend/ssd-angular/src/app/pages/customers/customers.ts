@@ -1,5 +1,6 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { MatTableModule } from '@angular/material/table';
+import { AfterViewInit, Component, OnInit, ViewChild, inject } from '@angular/core';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 
 import { Customer } from '../../models/customer';
 import { CustomersService } from '../../services/customers.service';
@@ -7,7 +8,7 @@ import { CustomersService } from '../../services/customers.service';
 @Component({
   selector: 'app-customers',
   standalone: true,
-  imports: [MatTableModule],
+  imports: [MatTableModule, MatPaginatorModule],
   templateUrl: './customers.html',
   styles: [
     `
@@ -37,6 +38,8 @@ import { CustomersService } from '../../services/customers.service';
         border-radius: 12px;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
       }
 
       table {
@@ -76,18 +79,29 @@ import { CustomersService } from '../../services/customers.service';
       ::ng-deep .mat-mdc-row:nth-child(even):hover {
         background: rgba(0, 153, 25, 0.08);
       }
+
+      ::ng-deep .mat-mdc-paginator {
+        border-top: 1px solid #e5e7eb;
+        background: #ffffff;
+      }
     `,
   ],
 })
-export class Customers implements OnInit {
+export class Customers implements OnInit, AfterViewInit {
   private readonly customersService = inject(CustomersService);
 
-  readonly customers = signal<Customer[]>([]);
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  readonly dataSource = new MatTableDataSource<Customer>([]);
   readonly displayedColumns = ['phone', 'name', 'brokerage', 'email'];
 
   ngOnInit(): void {
     this.customersService.getCustomers().subscribe((customers) => {
-      this.customers.set(customers);
+      this.dataSource.data = customers;
     });
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
   }
 }
