@@ -1,4 +1,9 @@
-<div class="orders-container">
+<header class="page-header">
+  <h1 class="page-title">Orders</h1>
+  <p class="page-subtitle">Sign and lockbox orders across all services</p>
+</header>
+
+<div class="card">
   <table mat-table [dataSource]="dataSource" aria-label="Orders">
     <ng-container matColumnDef="select">
       <th mat-header-cell *matHeaderCellDef>

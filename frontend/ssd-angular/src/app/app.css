@@ -5,15 +5,18 @@
 
 .shell {
   min-height: calc(100vh - 64px);
+  background: #f3f4f6;
 }
 
 .sidebar {
   width: 25%;
-  min-width: 220px;
+  min-width: 240px;
+  background: #ffffff;
   border-right: 1px solid #e5e7eb;
 }
 
 .content {
   flex: 1;
   min-width: 0;
+  padding: 32px;
 }

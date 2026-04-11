@@ -1,40 +1,38 @@
-<mat-nav-list>
-  <div mat-subheader>Menu</div>
+<nav>
+  <div class="section-header">Menu</div>
 
   <a
-    mat-list-item
+    class="menu-link"
     routerLink="/"
     routerLinkActive="active-link"
     [routerLinkActiveOptions]="{ exact: true }"
   >
     <fa-icon class="menu-icon" [icon]="faHouse" />
-    <span matListItemTitle>DashBoard</span>
+    <span class="label">Dashboard</span>
   </a>
 
-  <a mat-list-item routerLink="/customers" routerLinkActive="active-link">
+  <a class="menu-link" routerLink="/customers" routerLinkActive="active-link">
     <fa-icon class="menu-icon" [icon]="faUserGroup" />
-    <span matListItemTitle>Customers</span>
-    <mat-chip class="trailing">16</mat-chip>
+    <span class="label">Customers</span>
+    <span class="trailing-chip">16</span>
   </a>
 
-  <a mat-list-item routerLink="/orders" routerLinkActive="active-link">
+  <a class="menu-link" routerLink="/orders" routerLinkActive="active-link">
     <fa-icon class="menu-icon" [icon]="faSignHanging" />
-    <span matListItemTitle>Orders</span>
+    <span class="label">Orders</span>
   </a>
-</mat-nav-list>
 
-<mat-divider />
+  <hr class="section-divider" />
 
-<mat-nav-list>
-  <div mat-subheader>Tools</div>
+  <div class="section-header">Tools</div>
 
-  <a mat-list-item>
+  <a class="menu-link">
     <fa-icon class="menu-icon" [icon]="faGear" />
-    <span matListItemTitle>Settings</span>
+    <span class="label">Settings</span>
   </a>
 
-  <a mat-list-item>
+  <a class="menu-link">
     <fa-icon class="menu-icon" [icon]="faUserClock" />
-    <span matListItemTitle>Employees</span>
+    <span class="label">Employees</span>
   </a>
-</mat-nav-list>
+</nav>

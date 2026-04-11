@@ -13,20 +13,68 @@ import { CustomersService } from '../../services/customers.service';
     `
       :host {
         display: block;
-        padding: 16px;
+      }
+
+      .page-header {
+        margin-bottom: 20px;
+      }
+
+      .page-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #111827;
+        margin: 0 0 4px;
+      }
+
+      .page-subtitle {
+        font-size: 0.9rem;
+        color: #6b7280;
+        margin: 0;
+      }
+
+      .card {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
       }
 
       table {
         width: 100%;
       }
 
-      .mat-mdc-cell,
-      .mat-mdc-header-cell {
-        text-align: right;
+      ::ng-deep .mat-mdc-header-row {
+        background: #f9fafb;
       }
 
-      tr.customer-row {
+      ::ng-deep .mat-mdc-header-cell {
+        color: #374151;
+        font-weight: 600;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      ::ng-deep .mat-mdc-cell {
+        color: #1f2937;
+        font-size: 0.92rem;
+      }
+
+      ::ng-deep .mat-mdc-row {
+        transition: background 0.15s ease;
+      }
+
+      ::ng-deep .mat-mdc-row:hover {
+        background: rgba(0, 153, 25, 0.06);
         cursor: pointer;
+      }
+
+      ::ng-deep .mat-mdc-row:nth-child(even) {
+        background: #fafafa;
+      }
+
+      ::ng-deep .mat-mdc-row:nth-child(even):hover {
+        background: rgba(0, 153, 25, 0.08);
       }
     `,
   ],
