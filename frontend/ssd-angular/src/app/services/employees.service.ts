@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 
 import { Employee } from '../models/employee';
+import { RequestService } from '../models/service';
 
 @Injectable({ providedIn: 'root' })
 export class EmployeesService {
@@ -26,5 +27,15 @@ export class EmployeesService {
       employeeId,
       removedAt,
     });
+  }
+
+  getServices(): Observable<RequestService[]> {
+    return this.http
+      .get<{ services: RequestService[] }>('/api/services')
+      .pipe(map((r) => r.services));
+  }
+
+  updateOrder(orderId: string, fields: Record<string, unknown>): Observable<unknown> {
+    return this.http.patch(`/api/order/${encodeURIComponent(orderId)}`, fields);
   }
 }

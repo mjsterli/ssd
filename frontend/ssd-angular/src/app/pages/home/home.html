@@ -50,8 +50,51 @@
                 (click)="openInstallPanel(order, $event)"
                 title="Custom date / employee"
               >&#128197;</button>
+              <button
+                class="edit-btn"
+                [class.active]="installEditOrderId() === order.OrderID"
+                (click)="openInstallEdit(order, $event)"
+                title="Edit order"
+              >&#9998;</button>
             </div>
           </div>
+
+          @if (installEditOrderId() === order.OrderID) {
+            <div class="edit-panel">
+              <div class="install-panel-field" style="flex: 2; min-width: 240px;">
+                <label>Address</label>
+                <input type="text" [(ngModel)]="editAddress" />
+              </div>
+              <div class="install-panel-field">
+                <label>Service</label>
+                <select [(ngModel)]="editServiceId">
+                  @for (svc of services(); track svc.RequestServiceID) {
+                    <option [value]="svc.RequestServiceID">{{ svc.Description }}</option>
+                  }
+                </select>
+              </div>
+              <div class="install-panel-field">
+                <label>Install date</label>
+                <input type="datetime-local" [(ngModel)]="editInstallDate" />
+              </div>
+              <div class="install-panel-field">
+                <label>Occupancy</label>
+                <select [(ngModel)]="editOccupancy">
+                  <option value="VACANT">Vacant</option>
+                  <option value="OWNER">Owner</option>
+                  <option value="TENANT">Tenant</option>
+                </select>
+              </div>
+              <div class="install-panel-actions">
+                <button
+                  class="btn-confirm"
+                  [disabled]="savingOrderId() === order.OrderID"
+                  (click)="confirmInstallEdit(order)"
+                >{{ savingOrderId() === order.OrderID ? 'Saving…' : 'Save Changes' }}</button>
+                <button class="btn-cancel" (click)="cancelEdit('install')">Cancel</button>
+              </div>
+            </div>
+          }
 
           @if (installPanelOrderId() === order.OrderID) {
             <div class="install-panel">
@@ -140,8 +183,31 @@
                 (click)="openRemovePanel(order, $event)"
                 title="Custom date / employee"
               >&#128197;</button>
+              <button
+                class="edit-btn"
+                [class.active]="removeEditOrderId() === order.OrderID"
+                (click)="openRemoveEdit(order, $event)"
+                title="Edit remove date"
+              >&#9998;</button>
             </div>
           </div>
+
+          @if (removeEditOrderId() === order.OrderID) {
+            <div class="edit-panel">
+              <div class="install-panel-field">
+                <label>Remove by date</label>
+                <input type="date" [(ngModel)]="editRemoveDate" />
+              </div>
+              <div class="install-panel-actions">
+                <button
+                  class="btn-confirm"
+                  [disabled]="savingOrderId() === order.OrderID"
+                  (click)="confirmRemoveEdit(order)"
+                >{{ savingOrderId() === order.OrderID ? 'Saving…' : 'Save Changes' }}</button>
+                <button class="btn-cancel" (click)="cancelEdit('remove')">Cancel</button>
+              </div>
+            </div>
+          }
 
           @if (removePanelOrderId() === order.OrderID) {
             <div class="install-panel">

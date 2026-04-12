@@ -6,6 +6,7 @@ import { DashboardService } from '../../services/dashboard.service';
 import { EmployeesService } from '../../services/employees.service';
 import { DashboardData, DashboardOrder } from '../../models/dashboard';
 import { Employee } from '../../models/employee';
+import { RequestService } from '../../models/service';
 
 @Component({
   selector: 'app-home',
@@ -231,6 +232,45 @@ import { Employee } from '../../models/employee';
         font-weight: 600;
       }
 
+      .edit-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        background: transparent;
+        color: #6b7280;
+        font-size: 0.82rem;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+      }
+
+      .edit-btn:hover {
+        background: #f3f4f6;
+        border-color: #9ca3af;
+        color: #374151;
+      }
+
+      .edit-btn.active {
+        border-color: #6366f1;
+        color: #6366f1;
+        background: #f5f3ff;
+      }
+
+      .edit-panel {
+        padding: 14px 20px;
+        background: #fafafa;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: flex-end;
+        border-left: 3px solid #6366f1;
+      }
+
       .remove-btn {
         display: flex;
         align-items: center;
@@ -449,6 +489,7 @@ export class Home implements OnInit {
   readonly pageSize = 5;
   readonly data = signal<DashboardData | null>(null);
   readonly employees = signal<Employee[]>([]);
+  readonly services = signal<RequestService[]>([]);
   readonly installPage = signal(0);
   readonly removalPage = signal(0);
   readonly completedPage = signal(0);
@@ -457,15 +498,28 @@ export class Home implements OnInit {
   readonly removalSearch = signal('');
   readonly completedSearch = signal('');
 
-  // Separate panel tracking for each section
+  // Action panels (install / remove)
   readonly installPanelOrderId = signal<string | null>(null);
   readonly removePanelOrderId = signal<string | null>(null);
 
+  // Edit panels
+  readonly installEditOrderId = signal<string | null>(null);
+  readonly removeEditOrderId = signal<string | null>(null);
+
   private firstEmployeeId = '';
 
-  // Panel form fields (shared — only one panel open at a time)
+  // Action panel fields
   panelEmployeeId = '';
   panelDate = '';
+
+  // Install edit fields
+  editAddress = '';
+  editServiceId = 0;
+  editInstallDate = '';
+  editOccupancy = '';
+
+  // Remove edit field
+  editRemoveDate = '';
 
   ngOnInit(): void {
     this.refreshDashboard();
@@ -473,6 +527,7 @@ export class Home implements OnInit {
       this.employees.set(employees);
       this.firstEmployeeId = employees[0]?.EmployeeID ?? '';
     });
+    this.employeesService.getServices().subscribe((s) => this.services.set(s));
   }
 
   refreshDashboard(): void {
@@ -582,5 +637,62 @@ export class Home implements OnInit {
   cancelPanel(section: 'install' | 'remove'): void {
     if (section === 'install') this.installPanelOrderId.set(null);
     else this.removePanelOrderId.set(null);
+  }
+
+  // ── Edit actions ──────────────────────────────────────────────
+
+  openInstallEdit(order: DashboardOrder, event: Event): void {
+    event.stopPropagation();
+    this.installPanelOrderId.set(null);
+    if (this.installEditOrderId() === order.OrderID) {
+      this.installEditOrderId.set(null);
+      return;
+    }
+    this.installEditOrderId.set(order.OrderID);
+    this.editAddress = order.PropertyAddress;
+    this.editServiceId = order.RequestedService ? this.services().find(s => s.Description === order.RequestedService!.Description)?.RequestServiceID ?? 0 : 0;
+    this.editInstallDate = order.RequestedInstallDate.slice(0, 16);
+    this.editOccupancy = order.Occupancy;
+  }
+
+  confirmInstallEdit(order: DashboardOrder): void {
+    if (this.savingOrderId()) return;
+    this.savingOrderId.set(order.OrderID);
+    this.employeesService.updateOrder(order.OrderID, {
+      PropertyAddress: this.editAddress,
+      RequestedServiceID: this.editServiceId,
+      RequestedInstallDate: this.editInstallDate,
+      Occupancy: this.editOccupancy,
+    }).subscribe({
+      next: () => { this.installEditOrderId.set(null); this.savingOrderId.set(null); this.refreshDashboard(); },
+      error: () => this.savingOrderId.set(null),
+    });
+  }
+
+  openRemoveEdit(order: DashboardOrder, event: Event): void {
+    event.stopPropagation();
+    this.removePanelOrderId.set(null);
+    if (this.removeEditOrderId() === order.OrderID) {
+      this.removeEditOrderId.set(null);
+      return;
+    }
+    this.removeEditOrderId.set(order.OrderID);
+    this.editRemoveDate = order.RequestedRemoveDate ? order.RequestedRemoveDate.slice(0, 10) : '';
+  }
+
+  confirmRemoveEdit(order: DashboardOrder): void {
+    if (this.savingOrderId()) return;
+    this.savingOrderId.set(order.OrderID);
+    this.employeesService.updateOrder(order.OrderID, {
+      RequestedRemoveDate: this.editRemoveDate || null,
+    }).subscribe({
+      next: () => { this.removeEditOrderId.set(null); this.savingOrderId.set(null); this.refreshDashboard(); },
+      error: () => this.savingOrderId.set(null),
+    });
+  }
+
+  cancelEdit(section: 'install' | 'remove'): void {
+    if (section === 'install') this.installEditOrderId.set(null);
+    else this.removeEditOrderId.set(null);
   }
 }
