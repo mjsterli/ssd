@@ -1,22 +1,17 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+import { DashboardService } from '../../services/dashboard.service';
+import { EmployeesService } from '../../services/employees.service';
+import { DashboardData, DashboardOrder } from '../../models/dashboard';
+import { Employee } from '../../models/employee';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink],
-  template: `
-    <header class="page-header">
-      <h1 class="page-title">Dashboard</h1>
-      <p class="page-subtitle">Welcome back, Robert</p>
-    </header>
-
-    <div class="card welcome-card">
-      <h2>Get started</h2>
-      <p>Jump into your customer list to see active orders and recent activity.</p>
-      <a routerLink="/customers" class="cta">View customers →</a>
-    </div>
-  `,
+  imports: [DatePipe, FormsModule],
+  templateUrl: './home.html',
   styles: [
     `
       :host {
@@ -24,7 +19,7 @@ import { RouterLink } from '@angular/router';
       }
 
       .page-header {
-        margin-bottom: 20px;
+        margin-bottom: 24px;
       }
 
       .page-title {
@@ -40,45 +35,420 @@ import { RouterLink } from '@angular/router';
         margin: 0;
       }
 
-      .card {
+      .dashboard-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .section-card {
         background: #ffffff;
         border-radius: 12px;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-        padding: 32px;
+        overflow: hidden;
       }
 
-      .welcome-card h2 {
-        font-size: 1.15rem;
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 16px 20px;
+        border-bottom: 1px solid #f3f4f6;
+      }
+
+      .section-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .dot-install { background: #f59e0b; }
+      .dot-removal { background: #ef4444; }
+      .dot-completed { background: #009919; }
+
+      .section-title {
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #374151;
+        margin: 0;
+        flex: 1;
+      }
+
+      .section-count {
+        font-size: 0.78rem;
         font-weight: 600;
-        color: #111827;
-        margin: 0 0 8px;
+        color: #9ca3af;
+        background: #f3f4f6;
+        padding: 2px 8px;
+        border-radius: 999px;
       }
 
-      .welcome-card p {
-        color: #4b5563;
-        margin: 0 0 20px;
+      .order-list {
+        display: flex;
+        flex-direction: column;
       }
 
-      .cta {
+      .order-row {
+        display: grid;
+        grid-template-columns: 2fr 1.2fr 1fr 1fr auto;
+        gap: 12px;
+        padding: 12px 20px;
+        align-items: center;
+        border-bottom: 1px solid #f9fafb;
+        transition: background 0.12s ease;
+        cursor: pointer;
+      }
+
+      .order-row:last-child {
+        border-bottom: none;
+      }
+
+      .order-row:hover {
+        background: #f9fafb;
+      }
+
+      .order-row.selected {
+        background: rgba(0, 153, 25, 0.05);
+      }
+
+      .order-address {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #1f2937;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .order-customer {
+        font-size: 0.82rem;
+        color: #6b7280;
+        margin-top: 2px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .order-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .meta-label {
+        font-size: 0.68rem;
+        font-weight: 600;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .meta-value {
+        font-size: 0.82rem;
+        color: #374151;
+      }
+
+      .occupancy-badge {
         display: inline-block;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 0.68rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        background: rgba(0, 153, 25, 0.1);
+        color: #065f13;
+      }
+
+      .install-btn {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 11px;
+        border: 1px solid #009919;
+        border-radius: 6px;
+        background: transparent;
+        color: #009919;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background 0.12s ease, color 0.12s ease;
+      }
+
+      .install-btn:hover:not(:disabled) {
+        background: #009919;
+        color: #ffffff;
+      }
+
+      .install-btn:disabled {
+        opacity: 0.4;
+        cursor: default;
+      }
+
+      .custom-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        background: transparent;
+        color: #6b7280;
+        font-size: 0.85rem;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+      }
+
+      .custom-btn:hover {
+        background: #f3f4f6;
+        border-color: #9ca3af;
+        color: #374151;
+      }
+
+      .custom-btn.active {
+        background: #f3f4f6;
+        border-color: var(--ssd-primary);
+        color: var(--ssd-primary);
+      }
+
+      .row-actions {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+
+      .install-panel {
+        padding: 14px 20px;
+        background: #f9fafb;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: flex-end;
+      }
+
+      .install-panel-field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        flex: 1;
+        min-width: 180px;
+      }
+
+      .install-panel-field label {
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .install-panel-field input,
+      .install-panel-field select {
+        padding: 7px 10px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        color: #1f2937;
+        background: #ffffff;
+        outline: none;
+        transition: border-color 0.12s ease, box-shadow 0.12s ease;
+      }
+
+      .install-panel-field input:focus,
+      .install-panel-field select:focus {
+        border-color: var(--ssd-primary);
+        box-shadow: 0 0 0 3px rgba(0, 153, 25, 0.1);
+      }
+
+      .install-panel-actions {
+        display: flex;
+        gap: 8px;
+        align-items: flex-end;
+        padding-bottom: 1px;
+      }
+
+      .btn-confirm {
+        padding: 7px 16px;
         background: var(--ssd-primary);
         color: #ffffff;
-        text-decoration: none;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.875rem;
         font-weight: 600;
-        font-size: 0.9rem;
-        padding: 10px 18px;
-        border-radius: 8px;
-        transition: background 0.15s ease, transform 0.1s ease;
+        cursor: pointer;
+        transition: background 0.12s ease;
       }
 
-      .cta:hover {
+      .btn-confirm:hover:not(:disabled) {
         background: #00801a;
       }
 
-      .cta:active {
-        transform: translateY(1px);
+      .btn-confirm:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+
+      .btn-cancel {
+        padding: 7px 12px;
+        background: transparent;
+        color: #6b7280;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        cursor: pointer;
+      }
+
+      .btn-cancel:hover {
+        background: #f3f4f6;
+      }
+
+      .empty-state {
+        padding: 32px 20px;
+        text-align: center;
+        color: #9ca3af;
+        font-size: 0.875rem;
+        font-style: italic;
+      }
+
+      .loading {
+        padding: 32px 20px;
+        text-align: center;
+        color: #d1d5db;
+        font-size: 0.875rem;
+      }
+
+      .pagination {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 6px;
+        padding: 10px 16px;
+        border-top: 1px solid #f3f4f6;
+      }
+
+      .page-info {
+        font-size: 0.78rem;
+        color: #9ca3af;
+        margin-right: 4px;
+      }
+
+      .page-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        background: #ffffff;
+        color: #374151;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: background 0.12s ease, border-color 0.12s ease;
+      }
+
+      .page-btn:hover:not(:disabled) {
+        background: #f3f4f6;
+        border-color: #d1d5db;
+      }
+
+      .page-btn:disabled {
+        opacity: 0.35;
+        cursor: default;
       }
     `,
   ],
 })
-export class Home {}
+export class Home implements OnInit {
+  private readonly dashboardService = inject(DashboardService);
+  private readonly employeesService = inject(EmployeesService);
+
+  readonly pageSize = 5;
+  readonly data = signal<DashboardData | null>(null);
+  readonly employees = signal<Employee[]>([]);
+  readonly installPage = signal(0);
+  readonly removalPage = signal(0);
+  readonly completedPage = signal(0);
+  readonly savingOrderId = signal<string | null>(null);
+  readonly panelOrderId = signal<string | null>(null);
+
+  private firstEmployeeId = '';
+  panelEmployeeId = '';
+  panelDate = '';
+
+  ngOnInit(): void {
+    this.dashboardService.getDashboard().subscribe((d) => this.data.set(d));
+    this.employeesService.getEmployees().subscribe((employees) => {
+      this.employees.set(employees);
+      this.firstEmployeeId = employees[0]?.EmployeeID ?? '';
+    });
+  }
+
+  page(items: DashboardOrder[], pageIndex: number): DashboardOrder[] {
+    const start = pageIndex * this.pageSize;
+    return items.slice(start, start + this.pageSize);
+  }
+
+  totalPages(items: DashboardOrder[]): number {
+    return Math.ceil(items.length / this.pageSize);
+  }
+
+  customerName(order: DashboardOrder): string {
+    return `${order.belongsTo.FirstName} ${order.belongsTo.LastName}`;
+  }
+
+  // Quick install — current timestamp, first employee
+  markInstalled(order: DashboardOrder, event: Event): void {
+    event.stopPropagation();
+    if (!this.firstEmployeeId || this.savingOrderId()) return;
+    this.panelOrderId.set(null);
+    this.savingOrderId.set(order.OrderID);
+    this.employeesService.fulfillOrder(order.OrderID, this.firstEmployeeId).subscribe({
+      next: () => { this.removeOrder(order.OrderID); this.savingOrderId.set(null); },
+      error: () => this.savingOrderId.set(null),
+    });
+  }
+
+  // Toggle manual panel
+  openPanel(order: DashboardOrder, event: Event): void {
+    event.stopPropagation();
+    if (this.panelOrderId() === order.OrderID) {
+      this.panelOrderId.set(null);
+      return;
+    }
+    this.panelOrderId.set(order.OrderID);
+    this.panelEmployeeId = this.firstEmployeeId;
+    this.panelDate = new Date().toISOString().slice(0, 16);
+  }
+
+  cancelPanel(): void {
+    this.panelOrderId.set(null);
+  }
+
+  confirmPanel(): void {
+    const orderId = this.panelOrderId();
+    if (!orderId || !this.panelEmployeeId || this.savingOrderId()) return;
+    this.savingOrderId.set(orderId);
+    this.employeesService.fulfillOrder(orderId, this.panelEmployeeId, this.panelDate).subscribe({
+      next: () => { this.removeOrder(orderId); this.panelOrderId.set(null); this.savingOrderId.set(null); },
+      error: () => this.savingOrderId.set(null),
+    });
+  }
+
+  private removeOrder(orderId: string): void {
+    const d = this.data();
+    if (d) {
+      this.data.set({
+        ...d,
+        pendingInstalls: d.pendingInstalls.filter((o) => o.OrderID !== orderId),
+      });
+    }
+  }
+}

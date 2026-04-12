@@ -20,15 +20,11 @@ const orderSelect = {
 export const getDashboard = async (_, res) => {
   const now = new Date();
 
-  const [upcomingInstalls, pendingRemovals, recentlyCompleted] = await Promise.all([
-    // Upcoming installs: future install date, not yet fulfilled
+  const [pendingInstalls, pendingRemovals, recentlyCompleted] = await Promise.all([
+    // Pending installs: not yet fulfilled, ordered by install date (oldest first)
     prisma.order.findMany({
-      where: {
-        RequestedInstallDate: { gte: now },
-        Fullfillment: null,
-      },
+      where: { Fullfillment: null },
       orderBy: { RequestedInstallDate: "asc" },
-      take: 10,
       select: orderSelect,
     }),
 
@@ -39,7 +35,6 @@ export const getDashboard = async (_, res) => {
         Fullfillment: null,
       },
       orderBy: { RequestedRemoveDate: "asc" },
-      take: 10,
       select: orderSelect,
     }),
 
@@ -47,10 +42,9 @@ export const getDashboard = async (_, res) => {
     prisma.order.findMany({
       where: { Fullfillment: { isNot: null } },
       orderBy: { Fullfillment: { FullfilledAt: "desc" } },
-      take: 10,
       select: orderSelect,
     }),
   ]);
 
-  res.json({ upcomingInstalls, pendingRemovals, recentlyCompleted });
+  res.json({ pendingInstalls, pendingRemovals, recentlyCompleted });
 };

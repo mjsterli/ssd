@@ -41,7 +41,7 @@ services:
       TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN}
     ports:
       - "3000:3000"
-    command: sh -c "npx prisma db push && npx prisma db seed && npm run dev"
+    command: sh -c "npx prisma db push && (npx prisma db seed || true) && npm run dev"
 
   angular:
     build:

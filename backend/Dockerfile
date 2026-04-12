@@ -10,6 +10,4 @@ RUN npm ci
 
 COPY . .
 
-RUN mv prisma/generated.ts prisma/seed.ts
-
 RUN npx prisma generate
