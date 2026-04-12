@@ -191,11 +191,18 @@ async function main() {
   /** 75 Customers with 100 total orders **/
   const usedPhones = new Set<string>(employees.map((e) => e.PhoneNumber));
   let totalOrders = 0;
+  let customersCreated: { FirstName: string; LastName: string }[] = [];
+
 
   for (let i = 0; i < ORDER_COUNTS.length; i++) {
     const numOrders = ORDER_COUNTS[i];
-    const firstName = FIRST_NAMES[(i * 7 + 3) % FIRST_NAMES.length];
-    const lastName  = LAST_NAMES[(i * 11 + 5) % LAST_NAMES.length];
+    let firstName = FIRST_NAMES[(i * 7 + 3) % FIRST_NAMES.length];
+    let lastName  = LAST_NAMES[(i * 11 + 5) % LAST_NAMES.length];
+    while(customersCreated.findIndex((customer) => customer.FirstName == firstName && customer.LastName == lastName) > -1){
+      firstName = FIRST_NAMES[(i * 7 + 3) % FIRST_NAMES.length];
+      lastName  = LAST_NAMES[(i * 11 + 5) % LAST_NAMES.length];
+    }
+    customersCreated.push({FirstName: firstName, LastName: lastName});
     const phone     = generatePhone(usedPhones);
     const customerID = makeIDFromPhoneNumber(phone);
     const email     = `${firstName.toLowerCase()}.${lastName.toLowerCase()}${i + 1}@${EMAIL_DOMAINS[(i * 23 +7) % EMAIL_DOMAINS.length]}`;
