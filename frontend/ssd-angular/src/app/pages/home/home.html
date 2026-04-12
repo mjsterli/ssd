@@ -73,7 +73,7 @@
                 <label>Service</label>
                 <select [(ngModel)]="editServiceId">
                   @for (svc of services(); track svc.RequestServiceID) {
-                    <option [value]="svc.RequestServiceID">{{ svc.Description }}</option>
+                    <option [ngValue]="svc.RequestServiceID">{{ svc.Description }}</option>
                   }
                 </select>
               </div>

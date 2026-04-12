@@ -7,6 +7,7 @@ const orderSelect = {
   RequestedInstallDate: true,
   RequestedRemoveDate: true,
   Occupancy: true,
+  RequestedServiceID: true,
   RequestedService: { select: { Description: true } },
   belongsTo: { select: { FirstName: true, LastName: true, PhoneNumber: true } },
   Fullfillment: {

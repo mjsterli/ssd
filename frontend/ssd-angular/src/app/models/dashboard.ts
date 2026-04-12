@@ -5,6 +5,7 @@ export interface DashboardOrder {
   RequestedInstallDate: string;
   RequestedRemoveDate: string | null;
   Occupancy: string;
+  RequestedServiceID: number | null;
   RequestedService: { Description: string } | null;
   belongsTo: { FirstName: string; LastName: string; PhoneNumber: string };
   Fullfillment: {

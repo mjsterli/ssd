@@ -668,7 +668,7 @@ export class Home implements OnInit {
     }
     this.installEditOrderId.set(order.OrderID);
     this.editAddress = order.PropertyAddress;
-    this.editServiceId = order.RequestedService ? this.services().find(s => s.Description === order.RequestedService!.Description)?.RequestServiceID ?? 0 : 0;
+    this.editServiceId = order.RequestedServiceID ?? 0;
     this.editInstallDate = order.RequestedInstallDate.slice(0, 16);
     this.editOccupancy = order.Occupancy;
   }
