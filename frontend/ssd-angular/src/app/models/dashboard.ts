@@ -11,6 +11,10 @@ export interface DashboardOrder {
     FullfilledAt: string;
     EmployeeWhoFullfilled: { FirstName: string; LastName: string };
   } | null;
+  Removal: {
+    RemovedAt: string;
+    EmployeeWhoRemoved: { FirstName: string; LastName: string };
+  } | null;
 }
 
 export interface DashboardData {

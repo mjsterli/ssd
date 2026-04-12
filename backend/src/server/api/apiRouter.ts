@@ -8,6 +8,7 @@ import {
 import { getOrders, getOrder } from "./handlers/order";
 import { getDashboard } from "./handlers/dashboard";
 import { fulfillOrder } from "./handlers/fulfillment";
+import { removeOrder } from "./handlers/removal";
 
 const router = Router();
 
@@ -19,5 +20,6 @@ router.get("/orders", getOrders);
 router.get("/order/:orderid", getOrder);
 router.get("/dashboard", getDashboard);
 router.post("/order/:orderid/fulfill", fulfillOrder);
+router.post("/order/:orderid/remove", removeOrder);
 
 export default router;

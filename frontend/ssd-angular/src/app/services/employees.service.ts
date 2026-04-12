@@ -20,4 +20,11 @@ export class EmployeesService {
       fulfilledAt,
     });
   }
+
+  removeOrder(orderId: string, employeeId: string, removedAt?: string): Observable<unknown> {
+    return this.http.post(`/api/order/${encodeURIComponent(orderId)}/remove`, {
+      employeeId,
+      removedAt,
+    });
+  }
 }

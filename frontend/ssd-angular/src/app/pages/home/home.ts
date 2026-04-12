@@ -86,6 +86,43 @@ import { Employee } from '../../models/employee';
         border-radius: 999px;
       }
 
+      .section-search {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        padding: 0 10px;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      .section-search:focus-within {
+        border-color: var(--ssd-primary);
+        box-shadow: 0 0 0 3px rgba(0, 153, 25, 0.1);
+        background: #ffffff;
+      }
+
+      .section-search-icon {
+        font-size: 0.78rem;
+        color: #9ca3af;
+        line-height: 1;
+      }
+
+      .section-search input {
+        border: none;
+        outline: none;
+        background: transparent;
+        padding: 5px 0;
+        font-size: 0.8rem;
+        color: #1f2937;
+        width: 160px;
+      }
+
+      .section-search input::placeholder {
+        color: #9ca3af;
+      }
+
       .order-list {
         display: flex;
         flex-direction: column;
@@ -187,6 +224,40 @@ import { Employee } from '../../models/employee';
       .install-btn:disabled {
         opacity: 0.4;
         cursor: default;
+      }
+
+      .remove-btn {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 11px;
+        border: 1px solid #ef4444;
+        border-radius: 6px;
+        background: transparent;
+        color: #ef4444;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background 0.12s ease, color 0.12s ease;
+      }
+
+      .remove-btn:hover:not(:disabled) {
+        background: #ef4444;
+        color: #ffffff;
+      }
+
+      .remove-btn:disabled {
+        opacity: 0.4;
+        cursor: default;
+      }
+
+      .btn-confirm-remove {
+        background: #ef4444;
+      }
+
+      .btn-confirm-remove:hover:not(:disabled) {
+        background: #dc2626;
       }
 
       .custom-btn {
@@ -377,23 +448,34 @@ export class Home implements OnInit {
   readonly removalPage = signal(0);
   readonly completedPage = signal(0);
   readonly savingOrderId = signal<string | null>(null);
-  readonly panelOrderId = signal<string | null>(null);
+  readonly installSearch = signal('');
+  readonly removalSearch = signal('');
+  readonly completedSearch = signal('');
+
+  // Separate panel tracking for each section
+  readonly installPanelOrderId = signal<string | null>(null);
+  readonly removePanelOrderId = signal<string | null>(null);
 
   private firstEmployeeId = '';
+
+  // Panel form fields (shared — only one panel open at a time)
   panelEmployeeId = '';
   panelDate = '';
 
   ngOnInit(): void {
-    this.dashboardService.getDashboard().subscribe((d) => this.data.set(d));
+    this.refreshDashboard();
     this.employeesService.getEmployees().subscribe((employees) => {
       this.employees.set(employees);
       this.firstEmployeeId = employees[0]?.EmployeeID ?? '';
     });
   }
 
+  refreshDashboard(): void {
+    this.dashboardService.getDashboard().subscribe((d) => this.data.set(d));
+  }
+
   page(items: DashboardOrder[], pageIndex: number): DashboardOrder[] {
-    const start = pageIndex * this.pageSize;
-    return items.slice(start, start + this.pageSize);
+    return items.slice(pageIndex * this.pageSize, (pageIndex + 1) * this.pageSize);
   }
 
   totalPages(items: DashboardOrder[]): number {
@@ -404,51 +486,78 @@ export class Home implements OnInit {
     return `${order.belongsTo.FirstName} ${order.belongsTo.LastName}`;
   }
 
-  // Quick install — current timestamp, first employee
-  markInstalled(order: DashboardOrder, event: Event): void {
+  // ── Install actions ───────────────────────────────────────────
+
+  quickInstall(order: DashboardOrder, event: Event): void {
     event.stopPropagation();
     if (!this.firstEmployeeId || this.savingOrderId()) return;
-    this.panelOrderId.set(null);
+    this.installPanelOrderId.set(null);
     this.savingOrderId.set(order.OrderID);
     this.employeesService.fulfillOrder(order.OrderID, this.firstEmployeeId).subscribe({
-      next: () => { this.removeOrder(order.OrderID); this.savingOrderId.set(null); },
+      next: () => { this.savingOrderId.set(null); this.refreshDashboard(); },
       error: () => this.savingOrderId.set(null),
     });
   }
 
-  // Toggle manual panel
-  openPanel(order: DashboardOrder, event: Event): void {
+  openInstallPanel(order: DashboardOrder, event: Event): void {
     event.stopPropagation();
-    if (this.panelOrderId() === order.OrderID) {
-      this.panelOrderId.set(null);
+    this.removePanelOrderId.set(null);
+    if (this.installPanelOrderId() === order.OrderID) {
+      this.installPanelOrderId.set(null);
       return;
     }
-    this.panelOrderId.set(order.OrderID);
+    this.installPanelOrderId.set(order.OrderID);
     this.panelEmployeeId = this.firstEmployeeId;
     this.panelDate = new Date().toISOString().slice(0, 16);
   }
 
-  cancelPanel(): void {
-    this.panelOrderId.set(null);
-  }
-
-  confirmPanel(): void {
-    const orderId = this.panelOrderId();
+  confirmInstall(): void {
+    const orderId = this.installPanelOrderId();
     if (!orderId || !this.panelEmployeeId || this.savingOrderId()) return;
     this.savingOrderId.set(orderId);
     this.employeesService.fulfillOrder(orderId, this.panelEmployeeId, this.panelDate).subscribe({
-      next: () => { this.removeOrder(orderId); this.panelOrderId.set(null); this.savingOrderId.set(null); },
+      next: () => { this.installPanelOrderId.set(null); this.savingOrderId.set(null); this.refreshDashboard(); },
       error: () => this.savingOrderId.set(null),
     });
   }
 
-  private removeOrder(orderId: string): void {
-    const d = this.data();
-    if (d) {
-      this.data.set({
-        ...d,
-        pendingInstalls: d.pendingInstalls.filter((o) => o.OrderID !== orderId),
-      });
+  // ── Removal actions ───────────────────────────────────────────
+
+  quickRemove(order: DashboardOrder, event: Event): void {
+    event.stopPropagation();
+    if (!this.firstEmployeeId || this.savingOrderId()) return;
+    this.removePanelOrderId.set(null);
+    this.savingOrderId.set(order.OrderID);
+    this.employeesService.removeOrder(order.OrderID, this.firstEmployeeId).subscribe({
+      next: () => { this.savingOrderId.set(null); this.refreshDashboard(); },
+      error: () => this.savingOrderId.set(null),
+    });
+  }
+
+  openRemovePanel(order: DashboardOrder, event: Event): void {
+    event.stopPropagation();
+    this.installPanelOrderId.set(null);
+    if (this.removePanelOrderId() === order.OrderID) {
+      this.removePanelOrderId.set(null);
+      return;
     }
+    this.removePanelOrderId.set(order.OrderID);
+    this.panelEmployeeId = this.firstEmployeeId;
+    this.panelDate = new Date().toISOString().slice(0, 16);
+  }
+
+  confirmRemove(): void {
+    const orderId = this.removePanelOrderId();
+    if (!orderId || !this.panelEmployeeId || this.savingOrderId()) return;
+    this.savingOrderId.set(orderId);
+    this.employeesService.removeOrder(orderId, this.panelEmployeeId, this.panelDate).subscribe({
+      next: () => { this.removePanelOrderId.set(null); this.savingOrderId.set(null); this.refreshDashboard(); },
+      error: () => this.savingOrderId.set(null),
+    });
+  }
+
+  cancelPanel(section: 'install' | 'remove'): void {
+    if (section === 'install') this.installPanelOrderId.set(null);
+    else this.removePanelOrderId.set(null);
   }
 }
