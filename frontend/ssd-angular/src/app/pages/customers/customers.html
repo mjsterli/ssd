@@ -1,6 +1,19 @@
 <header class="page-header">
-  <h1 class="page-title">Customers</h1>
-  <p class="page-subtitle">Click a row to see that customer's orders</p>
+  <div class="header-row">
+    <div>
+      <h1 class="page-title">Customers</h1>
+      <p class="page-subtitle">Click a row to see that customer's orders</p>
+    </div>
+    <div class="search-wrapper">
+      <span class="search-icon">&#128269;</span>
+      <input
+        class="search-input"
+        type="text"
+        placeholder="Search customers..."
+        (input)="onSearch($event)"
+      />
+    </div>
+  </div>
 </header>
 
 <div class="card">
