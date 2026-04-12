@@ -6,6 +6,7 @@ import {
   getCustomersWithOrders
 } from "./handlers/customer";
 import { getOrders, getOrder } from "./handlers/order";
+import { getDashboard } from "./handlers/dashboard";
 
 const router = Router();
 
@@ -15,5 +16,6 @@ router.get("/customers/orders", getCustomersWithOrders);
 router.get("/customer/:phonenumber", getCustomerByPhoneNumber);
 router.get("/orders", getOrders);
 router.get("/order/:orderid", getOrder);
+router.get("/dashboard", getDashboard);
 
 export default router;
