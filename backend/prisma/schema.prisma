@@ -51,6 +51,7 @@ model Order {
   belongsTo            Customer          @relation(fields: [CustomerID], references: [CustomerID])
   CustomerID           String
   Fullfillment         Fullfillment?
+  Removal              Removal?
   Attachments          Attachment[]
 }
 
@@ -60,6 +61,7 @@ model Employee {
   LastName     String
   PhoneNumber  String         @unique
   Fullfillment Fullfillment[]
+  Removals     Removal[]
 }
 
 model Fullfillment {
@@ -68,6 +70,14 @@ model Fullfillment {
   FullfilledAt          DateTime
   EmployeeWhoFullfilled Employee @relation(fields: [FullfilledEmployeeID], references: [EmployeeID])
   FullfilledEmployeeID  String
+}
+
+model Removal {
+  Order              Order    @relation(fields: [RemovedOrderID], references: [OrderID])
+  RemovedOrderID     String   @unique
+  RemovedAt          DateTime
+  EmployeeWhoRemoved Employee @relation(fields: [RemovedEmployeeID], references: [EmployeeID])
+  RemovedEmployeeID  String
 }
 
 model Attachment {

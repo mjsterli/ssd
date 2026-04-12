@@ -474,12 +474,26 @@ export class Home implements OnInit {
     this.dashboardService.getDashboard().subscribe((d) => this.data.set(d));
   }
 
+  filter(items: DashboardOrder[], query: string): DashboardOrder[] {
+    const q = query.trim().toLowerCase();
+    if (q.length < 2) return items;
+    return items.filter((o) =>
+      [o.belongsTo.FirstName, o.belongsTo.LastName, o.PropertyAddress]
+        .some((f) => f.toLowerCase().includes(q))
+    );
+  }
+
   page(items: DashboardOrder[], pageIndex: number): DashboardOrder[] {
     return items.slice(pageIndex * this.pageSize, (pageIndex + 1) * this.pageSize);
   }
 
   totalPages(items: DashboardOrder[]): number {
     return Math.ceil(items.length / this.pageSize);
+  }
+
+  onSearch(searchSignal: ReturnType<typeof signal<string>>, pageSignal: ReturnType<typeof signal<number>>, event: Event): void {
+    searchSignal.set((event.target as HTMLInputElement).value);
+    pageSignal.set(0);
   }
 
   customerName(order: DashboardOrder): string {

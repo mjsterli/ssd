@@ -15,33 +15,34 @@ const orderSelect = {
       EmployeeWhoFullfilled: { select: { FirstName: true, LastName: true } },
     },
   },
+  Removal: {
+    select: {
+      RemovedAt: true,
+      EmployeeWhoRemoved: { select: { FirstName: true, LastName: true } },
+    },
+  },
 };
 
 export const getDashboard = async (_, res) => {
-  const now = new Date();
-
   const [pendingInstalls, pendingRemovals, recentlyCompleted] = await Promise.all([
-    // Pending installs: not yet fulfilled, ordered by install date (oldest first)
+    // Not yet installed
     prisma.order.findMany({
       where: { Fullfillment: null },
       orderBy: { RequestedInstallDate: "asc" },
       select: orderSelect,
     }),
 
-    // Needs removal: remove date is set and has passed, not yet fulfilled
+    // Installed but not yet removed
     prisma.order.findMany({
-      where: {
-        RequestedRemoveDate: { not: null, lte: now },
-        Fullfillment: null,
-      },
-      orderBy: { RequestedRemoveDate: "asc" },
+      where: { Fullfillment: { isNot: null }, Removal: null },
+      orderBy: { Fullfillment: { FullfilledAt: "asc" } },
       select: orderSelect,
     }),
 
-    // Recently completed: has a fulfillment record
+    // Both installed and removed
     prisma.order.findMany({
-      where: { Fullfillment: { isNot: null } },
-      orderBy: { Fullfillment: { FullfilledAt: "desc" } },
+      where: { Fullfillment: { isNot: null }, Removal: { isNot: null } },
+      orderBy: { Removal: { RemovedAt: "desc" } },
       select: orderSelect,
     }),
   ]);

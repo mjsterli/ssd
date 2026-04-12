@@ -10,7 +10,11 @@
     <div class="section-header">
       <span class="section-dot dot-install"></span>
       <h2 class="section-title">Needs Installation</h2>
-      <span class="section-count">{{ data()?.pendingInstalls?.length ?? 0 }}</span>
+      <span class="section-count">{{ filter(data()?.pendingInstalls ?? [], installSearch()).length }}</span>
+      <div class="section-search">
+        <span class="section-search-icon">&#128269;</span>
+        <input placeholder="Search…" (input)="onSearch(installSearch, installPage, $event)" />
+      </div>
     </div>
     @if (!data()) {
       <div class="loading">Loading...</div>
@@ -18,7 +22,7 @@
       <div class="empty-state">No pending installations</div>
     } @else {
       <div class="order-list">
-        @for (order of page(data()!.pendingInstalls, installPage()); track order.OrderID) {
+        @for (order of page(filter(data()!.pendingInstalls, installSearch()), installPage()); track order.OrderID) {
           <div class="order-row">
             <div>
               <div class="order-address">{{ order.PropertyAddress }}</div>
@@ -37,23 +41,19 @@
               <button
                 class="install-btn"
                 [disabled]="savingOrderId() === order.OrderID"
-                (click)="markInstalled(order, $event)"
+                (click)="quickInstall(order, $event)"
                 title="Mark installed now"
-              >
-                {{ savingOrderId() === order.OrderID ? '…' : '✓ Install' }}
-              </button>
+              >{{ savingOrderId() === order.OrderID ? '…' : '✓ Install' }}</button>
               <button
                 class="custom-btn"
-                [class.active]="panelOrderId() === order.OrderID"
-                (click)="openPanel(order, $event)"
-                title="Set custom date / employee"
-              >
-                &#128197;
-              </button>
+                [class.active]="installPanelOrderId() === order.OrderID"
+                (click)="openInstallPanel(order, $event)"
+                title="Custom date / employee"
+              >&#128197;</button>
             </div>
           </div>
 
-          @if (panelOrderId() === order.OrderID) {
+          @if (installPanelOrderId() === order.OrderID) {
             <div class="install-panel">
               <div class="install-panel-field">
                 <label>Employee</label>
@@ -71,21 +71,19 @@
                 <button
                   class="btn-confirm"
                   [disabled]="!panelEmployeeId || savingOrderId() === order.OrderID"
-                  (click)="confirmPanel()"
-                >
-                  {{ savingOrderId() === order.OrderID ? 'Saving…' : 'Confirm Install' }}
-                </button>
-                <button class="btn-cancel" (click)="cancelPanel()">Cancel</button>
+                  (click)="confirmInstall()"
+                >{{ savingOrderId() === order.OrderID ? 'Saving…' : 'Confirm Install' }}</button>
+                <button class="btn-cancel" (click)="cancelPanel('install')">Cancel</button>
               </div>
             </div>
           }
         }
       </div>
-      @if (totalPages(data()!.pendingInstalls) > 1) {
+      @if (totalPages(filter(data()!.pendingInstalls, installSearch())) > 1) {
         <div class="pagination">
-          <span class="page-info">{{ installPage() + 1 }} / {{ totalPages(data()!.pendingInstalls) }}</span>
+          <span class="page-info">{{ installPage() + 1 }} / {{ totalPages(filter(data()!.pendingInstalls, installSearch())) }}</span>
           <button class="page-btn" [disabled]="installPage() === 0" (click)="installPage.set(installPage() - 1)">‹</button>
-          <button class="page-btn" [disabled]="installPage() === totalPages(data()!.pendingInstalls) - 1" (click)="installPage.set(installPage() + 1)">›</button>
+          <button class="page-btn" [disabled]="installPage() === totalPages(filter(data()!.pendingInstalls, installSearch())) - 1" (click)="installPage.set(installPage() + 1)">›</button>
         </div>
       }
     }
@@ -96,7 +94,11 @@
     <div class="section-header">
       <span class="section-dot dot-removal"></span>
       <h2 class="section-title">Needs Removal</h2>
-      <span class="section-count">{{ data()?.pendingRemovals?.length ?? 0 }}</span>
+      <span class="section-count">{{ filter(data()?.pendingRemovals ?? [], removalSearch()).length }}</span>
+      <div class="section-search">
+        <span class="section-search-icon">&#128269;</span>
+        <input placeholder="Search…" (input)="onSearch(removalSearch, removalPage, $event)" />
+      </div>
     </div>
     @if (!data()) {
       <div class="loading">Loading...</div>
@@ -104,7 +106,7 @@
       <div class="empty-state">No pending removals</div>
     } @else {
       <div class="order-list">
-        @for (order of page(data()!.pendingRemovals, removalPage()); track order.OrderID) {
+        @for (order of page(filter(data()!.pendingRemovals, removalSearch()), removalPage()); track order.OrderID) {
           <div class="order-row">
             <div>
               <div class="order-address">{{ order.PropertyAddress }}</div>
@@ -115,18 +117,57 @@
               <span class="meta-value">{{ order.RequestedService?.Description ?? '—' }}</span>
             </div>
             <div class="order-meta">
-              <span class="meta-label">Remove By</span>
-              <span class="meta-value">{{ order.RequestedRemoveDate | date: 'mediumDate' }}</span>
+              <span class="meta-label">Installed</span>
+              <span class="meta-value">{{ order.Fullfillment!.FullfilledAt | date: 'mediumDate' }}</span>
             </div>
             <span class="occupancy-badge">{{ order.Occupancy }}</span>
+            <div class="row-actions">
+              <button
+                class="remove-btn"
+                [disabled]="savingOrderId() === order.OrderID"
+                (click)="quickRemove(order, $event)"
+                title="Mark removed now"
+              >{{ savingOrderId() === order.OrderID ? '…' : '✕ Remove' }}</button>
+              <button
+                class="custom-btn"
+                [class.active]="removePanelOrderId() === order.OrderID"
+                (click)="openRemovePanel(order, $event)"
+                title="Custom date / employee"
+              >&#128197;</button>
+            </div>
           </div>
+
+          @if (removePanelOrderId() === order.OrderID) {
+            <div class="install-panel">
+              <div class="install-panel-field">
+                <label>Employee</label>
+                <select [(ngModel)]="panelEmployeeId">
+                  @for (emp of employees(); track emp.EmployeeID) {
+                    <option [value]="emp.EmployeeID">{{ emp.FirstName }} {{ emp.LastName }}</option>
+                  }
+                </select>
+              </div>
+              <div class="install-panel-field">
+                <label>Removal date &amp; time</label>
+                <input type="datetime-local" [(ngModel)]="panelDate" />
+              </div>
+              <div class="install-panel-actions">
+                <button
+                  class="btn-confirm btn-confirm-remove"
+                  [disabled]="!panelEmployeeId || savingOrderId() === order.OrderID"
+                  (click)="confirmRemove()"
+                >{{ savingOrderId() === order.OrderID ? 'Saving…' : 'Confirm Removal' }}</button>
+                <button class="btn-cancel" (click)="cancelPanel('remove')">Cancel</button>
+              </div>
+            </div>
+          }
         }
       </div>
-      @if (totalPages(data()!.pendingRemovals) > 1) {
+      @if (totalPages(filter(data()!.pendingRemovals, removalSearch())) > 1) {
         <div class="pagination">
-          <span class="page-info">{{ removalPage() + 1 }} / {{ totalPages(data()!.pendingRemovals) }}</span>
+          <span class="page-info">{{ removalPage() + 1 }} / {{ totalPages(filter(data()!.pendingRemovals, removalSearch())) }}</span>
           <button class="page-btn" [disabled]="removalPage() === 0" (click)="removalPage.set(removalPage() - 1)">‹</button>
-          <button class="page-btn" [disabled]="removalPage() === totalPages(data()!.pendingRemovals) - 1" (click)="removalPage.set(removalPage() + 1)">›</button>
+          <button class="page-btn" [disabled]="removalPage() === totalPages(filter(data()!.pendingRemovals, removalSearch())) - 1" (click)="removalPage.set(removalPage() + 1)">›</button>
         </div>
       }
     }
@@ -137,43 +178,48 @@
     <div class="section-header">
       <span class="section-dot dot-completed"></span>
       <h2 class="section-title">Recently Completed</h2>
-      <span class="section-count">{{ data()?.recentlyCompleted?.length ?? 0 }}</span>
+      <span class="section-count">{{ filter(data()?.recentlyCompleted ?? [], completedSearch()).length }}</span>
+      <div class="section-search">
+        <span class="section-search-icon">&#128269;</span>
+        <input placeholder="Search…" (input)="onSearch(completedSearch, completedPage, $event)" />
+      </div>
     </div>
     @if (!data()) {
       <div class="loading">Loading...</div>
     } @else if (data()!.recentlyCompleted.length === 0) {
-      <div class="empty-state">No recently completed orders</div>
+      <div class="empty-state">No completed orders</div>
     } @else {
       <div class="order-list">
-        @for (order of page(data()!.recentlyCompleted, completedPage()); track order.OrderID) {
+        @for (order of page(filter(data()!.recentlyCompleted, completedSearch()), completedPage()); track order.OrderID) {
           <div class="order-row">
             <div>
               <div class="order-address">{{ order.PropertyAddress }}</div>
               <div class="order-customer">{{ customerName(order) }}</div>
             </div>
             <div class="order-meta">
-              <span class="meta-label">Service</span>
-              <span class="meta-value">{{ order.RequestedService?.Description ?? '—' }}</span>
-            </div>
-            <div class="order-meta">
-              <span class="meta-label">Completed</span>
+              <span class="meta-label">Installed</span>
               <span class="meta-value">{{ order.Fullfillment!.FullfilledAt | date: 'mediumDate' }}</span>
             </div>
             <div class="order-meta">
-              <span class="meta-label">By</span>
+              <span class="meta-label">Removed</span>
+              <span class="meta-value">{{ order.Removal!.RemovedAt | date: 'mediumDate' }}</span>
+            </div>
+            <div class="order-meta">
+              <span class="meta-label">Removed by</span>
               <span class="meta-value">
-                {{ order.Fullfillment!.EmployeeWhoFullfilled.FirstName }}
-                {{ order.Fullfillment!.EmployeeWhoFullfilled.LastName }}
+                {{ order.Removal!.EmployeeWhoRemoved.FirstName }}
+                {{ order.Removal!.EmployeeWhoRemoved.LastName }}
               </span>
             </div>
+            <span class="occupancy-badge">{{ order.Occupancy }}</span>
           </div>
         }
       </div>
-      @if (totalPages(data()!.recentlyCompleted) > 1) {
+      @if (totalPages(filter(data()!.recentlyCompleted, completedSearch())) > 1) {
         <div class="pagination">
-          <span class="page-info">{{ completedPage() + 1 }} / {{ totalPages(data()!.recentlyCompleted) }}</span>
+          <span class="page-info">{{ completedPage() + 1 }} / {{ totalPages(filter(data()!.recentlyCompleted, completedSearch())) }}</span>
           <button class="page-btn" [disabled]="completedPage() === 0" (click)="completedPage.set(completedPage() - 1)">‹</button>
-          <button class="page-btn" [disabled]="completedPage() === totalPages(data()!.recentlyCompleted) - 1" (click)="completedPage.set(completedPage() + 1)">›</button>
+          <button class="page-btn" [disabled]="completedPage() === totalPages(filter(data()!.recentlyCompleted, completedSearch())) - 1" (click)="completedPage.set(completedPage() + 1)">›</button>
         </div>
       }
     }
