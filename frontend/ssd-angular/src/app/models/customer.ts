@@ -11,6 +11,8 @@ export interface CustomerOrder {
 export interface Customer {
   PhoneNumber: string;
   FormattedPhoneNumber: string;
+  FirstName: string;
+  LastName: string;
   FullName: string;
   Brokerage: string;
   EmailAddress: string;

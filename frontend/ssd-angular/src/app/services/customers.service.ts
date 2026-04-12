@@ -15,6 +15,6 @@ export class CustomersService {
   getCustomers(): Observable<Customer[]> {
     return this.http
       .get<CustomersResponse>('/api/customers/orders')
-      .pipe(map((res) => (res.customers ?? []).sort((a, b) => (b.Orders?.length ?? 0) - (a.Orders?.length ?? 0))));
+      .pipe(map((res) => (res.customers ?? []).sort((a, b) => a.LastName.localeCompare(b.LastName) || a.FirstName.localeCompare(b.FirstName) || (a.Orders?.length ?? 0) - (b.Orders?.length ?? 0))));
   }
 }
