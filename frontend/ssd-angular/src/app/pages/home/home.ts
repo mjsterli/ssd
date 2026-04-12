@@ -226,6 +226,11 @@ import { Employee } from '../../models/employee';
         cursor: default;
       }
 
+      .overdue {
+        color: #ef4444;
+        font-weight: 600;
+      }
+
       .remove-btn {
         display: flex;
         align-items: center;
@@ -498,6 +503,10 @@ export class Home implements OnInit {
 
   customerName(order: DashboardOrder): string {
     return `${order.belongsTo.FirstName} ${order.belongsTo.LastName}`;
+  }
+
+  isOverdue(dateStr: string): boolean {
+    return new Date(dateStr) < new Date();
   }
 
   // ── Install actions ───────────────────────────────────────────

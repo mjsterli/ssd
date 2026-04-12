@@ -32,10 +32,10 @@ export const getDashboard = async (_, res) => {
       select: orderSelect,
     }),
 
-    // Installed but not yet removed
+    // Installed but not yet removed — soonest remove date first, nulls last
     prisma.order.findMany({
       where: { Fullfillment: { isNot: null }, Removal: null },
-      orderBy: { Fullfillment: { FullfilledAt: "asc" } },
+      orderBy: { RequestedRemoveDate: { sort: "asc", nulls: "last" } },
       select: orderSelect,
     }),
 

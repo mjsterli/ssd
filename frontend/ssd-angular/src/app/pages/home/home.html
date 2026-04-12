@@ -120,6 +120,12 @@
               <span class="meta-label">Installed</span>
               <span class="meta-value">{{ order.Fullfillment!.FullfilledAt | date: 'mediumDate' }}</span>
             </div>
+            <div class="order-meta">
+              <span class="meta-label">Remove By</span>
+              <span class="meta-value" [class.overdue]="order.RequestedRemoveDate && isOverdue(order.RequestedRemoveDate)">
+                {{ order.RequestedRemoveDate ? (order.RequestedRemoveDate | date: 'mediumDate') : '—' }}
+              </span>
+            </div>
             <span class="occupancy-badge">{{ order.Occupancy }}</span>
             <div class="row-actions">
               <button
