@@ -1,13 +1,15 @@
 <header class="page-header">
   <h1 class="page-title">Customers</h1>
-  <p class="page-subtitle">All customers with active or recent orders</p>
+  <p class="page-subtitle">Click a row to see that customer's orders</p>
 </header>
 
 <div class="card">
-  <table mat-table [dataSource]="dataSource" aria-label="Customers">
+  <table mat-table [dataSource]="dataSource" multiTemplateDataRows aria-label="Customers">
     <ng-container matColumnDef="phone">
       <th mat-header-cell *matHeaderCellDef>Phone</th>
-      <td mat-cell *matCellDef="let customer">{{ customer.FormattedPhoneNumber }}</td>
+      <td mat-cell *matCellDef="let customer">
+        <span class="expand-indicator">›</span>{{ customer.FormattedPhoneNumber }}
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="name">
@@ -25,8 +27,66 @@
       <td mat-cell *matCellDef="let customer">{{ customer.EmailAddress }}</td>
     </ng-container>
 
+    <ng-container matColumnDef="expandedDetail">
+      <td
+        mat-cell
+        *matCellDef="let customer"
+        [attr.colspan]="displayedColumns.length"
+      >
+        <div
+          class="detail-wrapper"
+          [@detailExpand]="isExpanded(customer) ? 'expanded' : 'collapsed'"
+        >
+          <div class="detail-content">
+            <h3 class="detail-heading">
+              Orders ({{ customer.Orders?.length || 0 }})
+            </h3>
+
+            @if (customer.Orders && customer.Orders.length > 0) {
+              <div class="order-list">
+                @for (order of customer.Orders; track order.OrderID) {
+                  <div class="order-item">
+                    <div class="order-field">
+                      <span class="order-label">Address</span>
+                      <span class="order-value">{{ order.PropertyAddress }}</span>
+                    </div>
+                    <div class="order-field">
+                      <span class="order-label">Service</span>
+                      <span class="order-value">
+                        {{ order.RequestedService?.Description || '—' }}
+                      </span>
+                    </div>
+                    <div class="order-field">
+                      <span class="order-label">Install Date</span>
+                      <span class="order-value">
+                        {{ order.RequestedInstallDate | date: 'mediumDate' }}
+                      </span>
+                    </div>
+                    <span class="occupancy-badge">{{ order.Occupancy }}</span>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="orders-empty">No orders for this customer.</p>
+            }
+          </div>
+        </div>
+      </td>
+    </ng-container>
+
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    <tr
+      mat-row
+      *matRowDef="let customer; columns: displayedColumns"
+      class="customer-row"
+      [class.expanded]="isExpanded(customer)"
+      (click)="toggleRow(customer)"
+    ></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: ['expandedDetail']"
+      class="detail-row"
+    ></tr>
   </table>
 
   <mat-paginator

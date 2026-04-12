@@ -18,6 +18,9 @@ export const getCustomersWithOrders = async (_, res) => {
           }
         }
       }
+    },
+    orderBy: {
+      Orders: { _count: 'desc' }
     }
   });
 
