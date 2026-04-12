@@ -36,6 +36,10 @@
               <span class="meta-label">Install Date</span>
               <span class="meta-value">{{ order.RequestedInstallDate | date: 'mediumDate' }}</span>
             </div>
+            <div class="order-meta">
+              <span class="meta-label">Remove By</span>
+              <span class="meta-value">{{ order.RequestedRemoveDate ? (order.RequestedRemoveDate | date: 'mediumDate') : '—' }}</span>
+            </div>
             <span class="occupancy-badge">{{ order.Occupancy }}</span>
             <div class="row-actions">
               <button

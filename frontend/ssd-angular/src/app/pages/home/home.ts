@@ -131,7 +131,7 @@ import { RequestService } from '../../models/service';
 
       .order-row {
         display: grid;
-        grid-template-columns: 2fr 1.2fr 1fr 1fr auto;
+        grid-template-columns: 2fr 1fr 1fr 1fr 0.65fr auto;
         gap: 12px;
         padding: 12px 20px;
         align-items: center;
