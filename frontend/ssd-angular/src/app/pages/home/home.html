@@ -65,7 +65,7 @@
 
           @if (installEditOrderId() === order.OrderID) {
             <div class="edit-panel">
-              <div class="install-panel-field" style="flex: 2; min-width: 240px;">
+              <div class="install-panel-field" style="flex: 2;">
                 <label>Address</label>
                 <input type="text" [(ngModel)]="editAddress" />
               </div>
@@ -78,8 +78,12 @@
                 </select>
               </div>
               <div class="install-panel-field">
-                <label>Install date</label>
+                <label>Install</label>
                 <input type="datetime-local" [(ngModel)]="editInstallDate" />
+              </div>
+              <div class="install-panel-field">
+                <label>Remove by</label>
+                <input type="date" [(ngModel)]="editRemoveDate" />
               </div>
               <div class="install-panel-field">
                 <label>Occupancy</label>
@@ -199,7 +203,7 @@
           @if (removeEditOrderId() === order.OrderID) {
             <div class="edit-panel">
               <div class="install-panel-field">
-                <label>Remove by date</label>
+                <label>Remove by</label>
                 <input type="date" [(ngModel)]="editRemoveDate" />
               </div>
               <div class="install-panel-actions">

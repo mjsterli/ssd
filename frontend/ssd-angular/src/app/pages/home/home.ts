@@ -283,10 +283,11 @@ import { RequestService } from '../../models/service';
         background: #fafafa;
         border-bottom: 1px solid #e5e7eb;
         display: flex;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         gap: 12px;
         align-items: flex-end;
         border-left: 3px solid #6366f1;
+        overflow-x: auto;
       }
 
       .remove-btn {
@@ -372,7 +373,7 @@ import { RequestService } from '../../models/service';
         flex-direction: column;
         gap: 4px;
         flex: 1;
-        min-width: 180px;
+        min-width: 0;
       }
 
       .install-panel-field label {
@@ -670,6 +671,7 @@ export class Home implements OnInit {
     this.editAddress = order.PropertyAddress;
     this.editServiceId = order.RequestedServiceID ?? 0;
     this.editInstallDate = order.RequestedInstallDate.slice(0, 16);
+    this.editRemoveDate = order.RequestedRemoveDate ? order.RequestedRemoveDate.slice(0, 10) : '';
     this.editOccupancy = order.Occupancy;
   }
 
@@ -680,6 +682,7 @@ export class Home implements OnInit {
       PropertyAddress: this.editAddress,
       RequestedServiceID: this.editServiceId,
       RequestedInstallDate: this.editInstallDate,
+      RequestedRemoveDate: this.editRemoveDate || null,
       Occupancy: this.editOccupancy,
     }).subscribe({
       next: () => { this.installEditOrderId.set(null); this.savingOrderId.set(null); this.refreshDashboard(); },
