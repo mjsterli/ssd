@@ -25,7 +25,7 @@
         @for (order of page(filter(data()!.pendingInstalls, installSearch()), installPage()); track order.OrderID) {
           <div class="order-row">
             <div>
-              <div class="order-address">{{ order.PropertyAddress }}</div>
+              <div class="order-address" [title]="order.PropertyAddress">{{ order.PropertyAddress }}</div>
               <div class="order-customer">{{ customerName(order) }}</div>
             </div>
             <div class="order-meta">
@@ -156,7 +156,7 @@
         @for (order of page(filter(data()!.pendingRemovals, removalSearch()), removalPage()); track order.OrderID) {
           <div class="order-row">
             <div>
-              <div class="order-address">{{ order.PropertyAddress }}</div>
+              <div class="order-address" [title]="order.PropertyAddress">{{ order.PropertyAddress }}</div>
               <div class="order-customer">{{ customerName(order) }}</div>
             </div>
             <div class="order-meta">
@@ -269,7 +269,7 @@
         @for (order of page(filter(data()!.recentlyCompleted, completedSearch()), completedPage()); track order.OrderID) {
           <div class="order-row">
             <div>
-              <div class="order-address">{{ order.PropertyAddress }}</div>
+              <div class="order-address" [title]="order.PropertyAddress">{{ order.PropertyAddress }}</div>
               <div class="order-customer">{{ customerName(order) }}</div>
             </div>
             <div class="order-meta">

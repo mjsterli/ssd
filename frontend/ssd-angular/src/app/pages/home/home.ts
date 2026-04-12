@@ -131,13 +131,19 @@ import { RequestService } from '../../models/service';
 
       .order-row {
         display: grid;
-        grid-template-columns: 2fr 1fr 1fr 1fr 0.65fr auto;
+        grid-template-columns: 2fr 1fr 1fr 1fr 68px auto;
         gap: 12px;
         padding: 12px 20px;
         align-items: center;
         border-bottom: 1px solid #f9fafb;
         transition: background 0.12s ease;
         cursor: pointer;
+        min-width: 0;
+      }
+
+      .order-row > *:first-child {
+        min-width: 0;
+        overflow: hidden;
       }
 
       .order-row:last-child {
@@ -152,6 +158,11 @@ import { RequestService } from '../../models/service';
         background: rgba(0, 153, 25, 0.05);
       }
 
+      .order-address-wrap {
+        min-width: 0;
+        overflow: hidden;
+      }
+
       .order-address {
         font-size: 0.875rem;
         font-weight: 500;
@@ -159,6 +170,8 @@ import { RequestService } from '../../models/service';
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        cursor: default;
+        position: relative;
       }
 
       .order-customer {
@@ -190,15 +203,20 @@ import { RequestService } from '../../models/service';
       }
 
       .occupancy-badge {
-        display: inline-block;
-        padding: 2px 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 68px;
+        padding: 3px 0;
         border-radius: 999px;
         font-size: 0.68rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.04em;
+        text-align: center;
         background: rgba(0, 153, 25, 0.1);
         color: #065f13;
+        white-space: nowrap;
       }
 
       .install-btn {
