@@ -1,5 +1,8 @@
 <nav class="ssd-navbar">
   <div class="brand">
+    <button class="hamburger" (click)="menuToggle.emit()" [attr.aria-label]="menuOpen ? 'Close menu' : 'Open menu'">
+      {{ menuOpen ? '✕' : '☰' }}
+    </button>
     <app-logo />
   </div>
 

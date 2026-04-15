@@ -1,10 +1,17 @@
 <div class="app-container">
-  <app-app-bar />
+  <app-app-bar [menuOpen]="menuOpen()" (menuToggle)="toggleMenu()" />
 
-  <div class="shell flex">
-    <aside class="sidebar">
-      <app-side-menu />
+  <!-- Mobile drawer backdrop -->
+  @if (menuOpen()) {
+    <div class="drawer-backdrop" (click)="closeMenu()"></div>
+  }
+
+  <div class="shell">
+    <!-- Sidebar: always visible on desktop, rail on tablet, drawer on mobile -->
+    <aside class="sidebar" [class.drawer-open]="menuOpen()">
+      <app-side-menu (linkClicked)="closeMenu()" />
     </aside>
+
     <main class="content">
       <router-outlet />
     </main>

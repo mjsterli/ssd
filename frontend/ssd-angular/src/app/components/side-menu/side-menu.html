@@ -6,18 +6,19 @@
     routerLink="/"
     routerLinkActive="active-link"
     [routerLinkActiveOptions]="{ exact: true }"
+    (click)="linkClicked.emit()"
   >
     <fa-icon class="menu-icon" [icon]="faHouse" />
     <span class="label">Dashboard</span>
   </a>
 
-  <a class="menu-link" routerLink="/customers" routerLinkActive="active-link">
+  <a class="menu-link" routerLink="/customers" routerLinkActive="active-link" (click)="linkClicked.emit()">
     <fa-icon class="menu-icon" [icon]="faUserGroup" />
     <span class="label">Customers</span>
     <span class="trailing-chip">16</span>
   </a>
 
-  <a class="menu-link" routerLink="/orders" routerLinkActive="active-link">
+  <a class="menu-link" routerLink="/orders" routerLinkActive="active-link" (click)="linkClicked.emit()">
     <fa-icon class="menu-icon" [icon]="faSignHanging" />
     <span class="label">Orders</span>
   </a>
@@ -26,12 +27,12 @@
 
   <div class="section-header">Tools</div>
 
-  <a class="menu-link">
+  <a class="menu-link" (click)="linkClicked.emit()">
     <fa-icon class="menu-icon" [icon]="faGear" />
     <span class="label">Settings</span>
   </a>
 
-  <a class="menu-link">
+  <a class="menu-link" (click)="linkClicked.emit()">
     <fa-icon class="menu-icon" [icon]="faUserClock" />
     <span class="label">Employees</span>
   </a>

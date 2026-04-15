@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatMenuModule } from '@angular/material/menu';
@@ -33,7 +33,29 @@ import { Logo } from '../logo/logo';
       .brand {
         display: flex;
         align-items: center;
+        gap: 12px;
         flex-shrink: 0;
+      }
+
+      .hamburger {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border: none;
+        background: transparent;
+        border-radius: 8px;
+        cursor: pointer;
+        color: #ffffff;
+        font-size: 1.4rem;
+        line-height: 1;
+        flex-shrink: 0;
+        transition: background 0.15s ease;
+      }
+
+      .hamburger:hover {
+        background: rgba(255, 255, 255, 0.15);
       }
 
       .toolbar-actions {
@@ -89,9 +111,34 @@ import { Logo } from '../logo/logo';
         align-items: center;
         gap: 8px;
       }
+
+      /* Tablet & mobile: show hamburger */
+      @media (max-width: 1023px) {
+        .hamburger {
+          display: flex;
+        }
+      }
+
+      /* Mobile: hide user name, tighten gaps */
+      @media (max-width: 767px) {
+        .ssd-navbar {
+          padding: 0 16px;
+        }
+
+        .toolbar-actions {
+          gap: 16px;
+        }
+
+        .user-name {
+          display: none;
+        }
+      }
     `,
   ],
 })
 export class AppBar {
+  @Input() menuOpen = false;
+  @Output() menuToggle = new EventEmitter<void>();
+
   readonly settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 }

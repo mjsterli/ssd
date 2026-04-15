@@ -1,15 +1,20 @@
 .app-container {
   max-width: 1280px;
   margin: 0 auto;
+  position: relative;
 }
 
 .shell {
+  display: flex;
   background: #f3f4f6;
+  min-height: calc(100vh - 64px);
 }
 
+/* ── Sidebar ─────────────────────────────────────── */
+
 .sidebar {
-  width: 25%;
-  min-width: 240px;
+  width: 240px;
+  flex-shrink: 0;
   background: #ffffff;
   border-right: 1px solid #e5e7eb;
 }
@@ -18,4 +23,63 @@
   flex: 1;
   min-width: 0;
   padding: 32px;
+}
+
+/* ── Tablet (768 – 1023px): icon-only rail ────────── */
+
+@media (max-width: 1023px) and (min-width: 768px) {
+  .sidebar {
+    width: 64px;
+    overflow: hidden;
+  }
+
+  .content {
+    padding: 24px 20px;
+  }
+}
+
+/* ── Mobile (<768px): hidden drawer ──────────────── */
+
+@media (max-width: 767px) {
+  .shell {
+    position: relative;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    height: calc(100vh - 64px);
+    width: 240px;
+    z-index: 200;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: none;
+  }
+
+  .sidebar.drawer-open {
+    transform: translateX(0);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+  }
+
+  .content {
+    padding: 16px;
+    width: 100%;
+  }
+}
+
+/* ── Backdrop (mobile only) ──────────────────────── */
+
+.drawer-backdrop {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .drawer-backdrop {
+    display: block;
+    position: fixed;
+    inset: 64px 0 0 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 199;
+  }
 }

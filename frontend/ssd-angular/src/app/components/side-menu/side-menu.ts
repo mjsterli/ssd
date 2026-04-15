@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import {
@@ -21,6 +21,7 @@ import {
         width: 100%;
         background: #ffffff;
         padding: 16px 0;
+        overflow: hidden;
       }
 
       .section-header {
@@ -31,6 +32,8 @@ import {
         color: #6b7280;
         padding: 0 24px;
         margin: 8px 0 4px;
+        white-space: nowrap;
+        overflow: hidden;
       }
 
       .menu-link {
@@ -46,6 +49,8 @@ import {
         text-decoration: none;
         transition: background 0.15s ease, color 0.15s ease;
         cursor: pointer;
+        white-space: nowrap;
+        overflow: hidden;
       }
 
       .menu-link:hover {
@@ -99,10 +104,38 @@ import {
         margin: 12px 16px;
         border: none;
       }
+
+      /* ── Tablet icon-rail (64px wide) ──────────────── */
+      @media (max-width: 1023px) and (min-width: 768px) {
+        .section-header {
+          padding: 0;
+          text-align: center;
+          font-size: 0;           /* hide text, keep spacing */
+          margin: 8px 0 4px;
+        }
+
+        .menu-link {
+          padding: 10px 0;
+          margin: 2px 8px;
+          justify-content: center;
+          gap: 0;
+        }
+
+        .label,
+        .trailing-chip {
+          display: none;
+        }
+
+        .menu-icon {
+          width: 20px;
+        }
+      }
     `,
   ],
 })
 export class SideMenu {
+  @Output() linkClicked = new EventEmitter<void>();
+
   readonly faHouse = faHouse;
   readonly faUserGroup = faUserGroup;
   readonly faSignHanging = faSignHanging;

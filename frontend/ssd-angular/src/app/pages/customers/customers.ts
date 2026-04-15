@@ -240,6 +240,44 @@ import { CustomersService } from '../../services/customers.service';
         border-top: 1px solid #e5e7eb;
         background: #ffffff;
       }
+
+      /* ── Responsive ─────────────────────────────────── */
+      @media (max-width: 900px) {
+        .header-row {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .search-wrapper {
+          width: 100%;
+        }
+
+        .search-input {
+          width: 100%;
+        }
+
+        .card {
+          overflow-x: auto;
+        }
+
+        table {
+          min-width: 560px;
+        }
+
+        .order-item {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .detail-content {
+          padding: 14px 16px;
+        }
+
+        .order-item {
+          grid-template-columns: 1fr;
+        }
+      }
     `,
   ],
 })

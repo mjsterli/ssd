@@ -468,6 +468,64 @@ import { RequestService } from '../../models/service';
         border-top: 1px solid #f3f4f6;
       }
 
+      /* ── Tablet (≤900px): drop 2 middle meta columns ── */
+      @media (max-width: 900px) {
+        .order-row {
+          grid-template-columns: 1fr 68px auto;
+          gap: 8px;
+          padding: 10px 16px;
+        }
+
+        /* Hide service + install-date meta columns, keep address+remove-by+occupancy+actions */
+        .order-meta:nth-child(2),
+        .order-meta:nth-child(3) {
+          display: none;
+        }
+      }
+
+      /* ── Mobile (≤600px): single column card layout ─── */
+      @media (max-width: 600px) {
+        .section-header {
+          flex-wrap: wrap;
+          gap: 8px;
+          padding: 12px 14px;
+        }
+
+        .section-search {
+          width: 100%;
+          order: 5;
+        }
+
+        .section-search input {
+          width: 100%;
+        }
+
+        .order-row {
+          grid-template-columns: 1fr auto;
+          gap: 6px;
+          padding: 10px 14px;
+        }
+
+        .order-meta {
+          display: none;
+        }
+
+        .occupancy-badge {
+          display: none;
+        }
+
+        .install-panel,
+        .edit-panel {
+          padding: 12px 14px;
+          flex-wrap: wrap;
+          overflow-x: visible;
+        }
+
+        .install-panel-field {
+          min-width: 140px;
+        }
+      }
+
       .page-info {
         font-size: 0.78rem;
         color: #9ca3af;

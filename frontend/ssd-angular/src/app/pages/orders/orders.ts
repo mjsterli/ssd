@@ -110,6 +110,17 @@ import { OrdersService } from '../../services/orders.service';
       :host ::ng-deep .mat-mdc-checkbox .mdc-checkbox--selected .mdc-checkbox__ripple {
         background-color: var(--ssd-primary) !important;
       }
+
+      /* ── Responsive ─────────────────────────────────── */
+      @media (max-width: 900px) {
+        .card {
+          overflow-x: auto;
+        }
+
+        table {
+          min-width: 620px;
+        }
+      }
     `,
   ],
 })
